@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Catalin Iordache – CV</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #1a1030 0, #05030a 55%, #020107 100%);
+      color: #e5e5ff;
+      font-family: "Fira Code", Consolas, monospace;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 1100px;
+      position: relative;
+    }
+
+    /* Language selector */
+
+    .lang-select-wrapper {
+      position: absolute;
+      top: -10px;
+      right: 0;
+      transform: translateY(-100%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #cfd3ff;
+    }
+
+    .lang-label {
+      opacity: 0.8;
+    }
+
+    #langSelect {
+      background: rgba(5, 3, 15, 0.95);
+      border: 1px solid rgba(0, 255, 255, 0.7);
+      color: #e5e5ff;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-family: "Fira Code", Consolas, monospace;
+      font-size: 12px;
+      outline: none;
+      box-shadow:
+        0 0 10px rgba(0, 255, 255, 0.6),
+        0 0 20px rgba(163, 94, 255, 0.4);
+      appearance: none;
+      position: relative;
+      padding-right: 24px;
+    }
+
+    #langSelect:focus {
+      box-shadow:
+        0 0 14px rgba(0, 255, 255, 0.9),
+        0 0 26px rgba(163, 94, 255, 0.7);
+    }
+
+    .lang-select-wrapper::after {
+      content: "▼";
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px;
+      color: #7de3ff;
+      pointer-events: none;
+    }
+
+    /* Terminal intro */
+
+    .terminal {
+      background: rgba(5, 3, 15, 0.95);
+      border: 1px solid rgba(163, 94, 255, 0.6);
+      box-shadow:
+        0 0 25px rgba(163, 94, 255, 0.6),
+        0 0 60px rgba(0, 255, 255, 0.25);
+      padding: 18px;
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .terminal::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.04),
+        rgba(255, 255, 255, 0.04) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      mix-blend-mode: soft-light;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: #9fa3ff;
+      font-size: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot.red { background: #ff5f57; }
+    .dot.yellow { background: #febc2e; }
+    .dot.green { background: #28c840; }
+
+    .terminal-title {
+      margin-left: 6px;
+      opacity: 0.8;
+    }
+
+    .prompt-line {
+      color: #7dffcf;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .prompt-label {
+      color: #5af2ff;
+    }
+
+    #typewriter {
+      white-space: pre-wrap;
+      line-height: 1.4;
+      min-height: 220px;
+      color: #bafff2;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      background: #7dffcf;
+      margin-left: 2px;
+      animation: blink 0.9s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      50.01%, 100% { opacity: 0; }
+    }
+
+    /* Portfolio section */
+
+    .portfolio {
+      margin-top: 30px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .portfolio.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 800px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, rgba(163, 94, 255, 0.25), rgba(5, 3, 15, 0.95));
+      border: 1px solid rgba(0, 255, 255, 0.25);
+      box-shadow:
+        0 0 18px rgba(163, 94, 255, 0.4),
+        0 0 35px rgba(0, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(
+        from 180deg,
+        rgba(163, 94, 255, 0.0),
+        rgba(163, 94, 255, 0.4),
+        rgba(0, 255, 255, 0.0),
+        rgba(163, 94, 255, 0.0)
+      );
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .card:hover::before {
+      opacity: 0.7;
+    }
+
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #e6d7ff;
+      text-shadow: 0 0 8px rgba(163, 94, 255, 0.8);
+    }
+
+    .card h3 {
+      font-size: 15px;
+      margin-top: 10px;
+      margin-bottom: 4px;
+      color: #9fe7ff;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 255, 255, 0.5);
+      font-size: 11px;
+      color: #bffcff;
+      margin-right: 6px;
+      margin-bottom: 4px;
+      background: rgba(5, 20, 30, 0.8);
+    }
+
+    .card p, .card li {
+      font-size: 13px;
+      color: #e5e5ff;
+    }
+
+    .card ul {
+      margin-left: 16px;
+      margin-top: 4px;
+      margin-bottom: 6px;
+    }
+
+    .tagline {
+      font-size: 13px;
+      color: #b0a6ff;
+      margin-bottom: 8px;
+    }
+
+    .name {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #ffffff;
+      text-shadow:
+        0 0 10px rgba(163, 94, 255, 0.9),
+        0 0 25px rgba(0, 255, 255, 0.6);
+    }
+
+    .contact-line {
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    a {
+      color: #7de3ff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="lang-select-wrapper">
+      <span class="lang-label">Language:</span>
+      <select id="langSelect">
+        <option value="de">DE</option>
+        <option value="en">EN</option>
+        <option value="ro">RO</option>
+      </select>
+    </div>
+
+    <!-- PART 1: TERMINAL INTRO -->
+    <div class="terminal" id="terminal">
+      <div class="terminal-header">
+        <div class="dot red"></div>
+        <div class="dot yellow"></div>
+        <div class="dot green"></div>
+        <span class="terminal-title" id="terminalTitle">~/catalin/catalin_cv.txt</span>
+      </div>
+
+      <div class="prompt-line" id="promptLine">
+        <span class="prompt-label" id="promptUser">catalin@pc</span>:<span class="prompt-label">~$</span>
+        <span id="promptCommand"> cat catalin_cv.txt</span>
+      </div>
+
+      <div id="typewriter"></div>
+    </div>
+
+    <!-- PART 2: CYBERPUNK PORTFOLIO -->
+    <div class="portfolio" id="portfolio"></div>
+  </div>
+
+  <script>
+    const cvTexts = {
+      de: `
+Name: Catalin Iordache
+Rolle: Research- & Datenprofil mit technischem Hintergrund
+Ort: Vienna, Österreich
+
+Profil:
+  Analytischer und selbstständiger Fachmann mit Erfahrung in Research-Analyse,
+  Datenmanagement und technischer Leistungsauswertung. Kompetent in
+  Datenbereinigung, Validierung und der Ableitung von verwertbaren
+  Erkenntnissen zur Entscheidungsunterstützung. Hintergrund in nachhaltigen
+  Energiesystemen, Projektkoordination und der Erstellung pädagogischer Inhalte.
+  Aktive Weiterentwicklung der deutschen Sprachkenntnisse (B1 in Fortschritt).
+
+Berufserfahrung:
+  - Zusteller (Teilzeit), Foodora, Wien (03/2020 - 03/2023)
+  - Selbstständiger Technischer Analyst & Projektkoord, EcoRoller, Wien (06/2019 - 11/2022)
+  - Research Analyst, InterBiz Resco, Bukarest (07/2013 - 07/2019)
+
+Fähigkeiten:
+  Datenanalyse, Datenbereinigung, Validierung, Leistungsanalyse, Reporting,
+  Off-Grid-Systemdesign, Solaranlageninstallation, Batteriemanagement,
+  Technische Fehleranalyse, MS Office, Google Sheets, SQL-Grundlagen.
+
+Sprachen:
+  Rumänisch (C2), Englisch (B2), Deutsch (B1 in Ausbildung).
+
+[ Systemstatus: Nächster Abschnitt wird geladen ]
+[ Warte auf neue Daten... ]
+[ ... ]
+`,
+      en: `
+Name: Catalin Iordache
+Role: Research & data profile with technical background
+Location: Vienna, Austria
+
+Profile:
+  Analytical and independent professional with experience in research analysis,
+  data management and technical performance evaluation. Skilled in data
+  cleaning, validation and deriving actionable insights to support decision-
+  making. Strong background in sustainable energy systems, project coordination
+  and creating educational content. Currently improving German language skills
+  (B1 in progress).
+
+Work experience:
+  - Delivery Contractor (Part-time), Foodora, Vienna (03/2020 - 03/2023)
+  - Self-Employed Technical Analyst & Project Coordinator, EcoRoller, Vienna (06/2019 - 11/2022)
+  - Research Analyst, InterBiz Resco, Bucharest (07/2013 - 07/2019)
+
+Skills:
+  Data analysis, data cleaning, validation, performance analysis, reporting,
+  off-grid system design, solar installation, battery management, technical
+  troubleshooting, MS Office, Google Sheets, basic SQL.
+
+Languages:
+  Romanian (C2), English (B2), German (B1 in progress).
+
+[ System status: Loading next section ]
+[ Awaiting new data... ]
+[ ... ]
+`,
+      ro: `
+Nume: Catalin Iordache
+Rol: Profil de cercetare și date cu background tehnic
+Locație: Viena, Austria
+
+Profil:
+  Profesional analitic și independent, cu experiență în analiza de cercetare,
+  managementul datelor și evaluarea performanței tehnice. Competent în
+  curățarea datelor, validare și extragerea de informații utile pentru
+  susținerea procesului decizional. Fundal solid în sisteme energetice
+  durabile, coordonare de proiecte și crearea de conținut educațional.
+  În prezent își dezvoltă activ cunoștințele de limba germană (B1 în progres).
+
+Experiență profesională:
+  - Curier (Part-time), Foodora, Viena (03/2020 - 03/2023)
+  - Analist Tehnic & Coordonator de Proiect (Independent), EcoRoller, Viena (06/2019 - 11/2022)
+  - Analist de Cercetare, InterBiz Resco, București (07/2013 - 07/2019)
+
+Abilități:
+  Analiză de date, curățare date, validare, analiză de performanță, raportare,
+  proiectare sisteme off-grid, instalare sisteme solare, managementul
+  bateriilor, depanare tehnică, MS Office, Google Sheets, cunoștințe de bază SQL.
+
+Limbi:
+  Română (C2), Engleză (B2), Germană (B1 în curs).
+
+[ Status sistem: Se încarcă următoarea secțiune ]
+[ Se așteaptă date noi... ]
+[ ... ]
+`
+    };
+
+    const portfolioTemplates = {
+      de: `
+      <div class="grid">
+        <div class="card">
+          <div class="name">Catalin Iordache</div>
+          <div class="tagline">Analytischer Research- & Datenprofil mit technischem Hintergrund</div>
+          <p class="contact-line">📍 Vienna 1220</p>
+          <p class="contact-line">📧 <a href="mailto:iordache.catalin@gmail.com">iordache.catalin@gmail.com</a></p>
+          <p class="contact-line">📱 068110207453</p>
+
+          <h2>Profil / Über mich</h2>
+          <p>
+            Analytischer und selbstständiger Fachmann mit Erfahrung in Research-Analyse, Datenmanagement
+            und technischer Leistungsauswertung. Kompetent in Datenbereinigung, Validierung und der
+            Ableitung von verwertbaren Erkenntnissen zur Entscheidungsunterstützung. Hintergrund in
+            nachhaltigen Energiesystemen, Projektkoordination und der Erstellung pädagogischer Inhalte.
+            Aktive Weiterentwicklung der deutschen Sprachkenntnisse (B1 in Fortschritt). Offen für Rollen
+            in Datenanalyse, Research oder technischem Support.
+          </p>
+
+          <h2>Berufserfahrung</h2>
+
+          <h3>Zusteller (Teilzeit) – Foodora, Wien (03/2020 – 03/2023)</h3>
+          <ul>
+            <li>Zuverlässige und pünktliche Zustellung mit ausgezeichneter Kundenkommunikation.</li>
+          </ul>
+
+          <h3>Selbstständiger Technischer Analyst & Projektkoord – EcoRoller, Wien (06/2019 – 11/2022)</h3>
+          <ul>
+            <li>Analyse technischer Leistungsdaten und Ableitung von Optimierungsmaßnahmen zur Effizienzsteigerung.</li>
+            <li>Erstellung datenbasierter Förderanträge inkl. Machbarkeitsanalysen und Kostenkalkulationen.</li>
+            <li>Planung und Umsetzung technischer und geschäftlicher Projekte mit messbaren Ergebnissen.</li>
+            <li>Implementierung von Kostenreduktions- und Abfallminimierungsstrategien basierend auf Leistungskennzahlen.</li>
+            <li>Durchführung von Recherchen, Validierung von Informationen und Dokumentation für Entscheidungsprozesse.</li>
+          </ul>
+
+          <h3>Research Analyst – InterBiz Resco, Bukarest (07/2013 – 07/2019)</h3>
+          <ul>
+            <li>Datenbereinigung, Validierung und Qualitätskontrollen für Forschungsdatensätze.</li>
+            <li>Online-Recherchen und Aktualisierung interner Informationssysteme.</li>
+            <li>Analyse von Datensätzen zur Ableitung relevanter Erkenntnisse für interne Stakeholder.</li>
+            <li>Mitarbeit an Forschungsstrategien und datengetriebenen Entscheidungsprozessen.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>Fähigkeiten</h2>
+
+          <h3>Datenanalyse</h3>
+          <div>
+            <span class="pill">Datenbereinigung</span>
+            <span class="pill">Datenvalidierung</span>
+            <span class="pill">Leistungsanalyse</span>
+            <span class="pill">Reporting</span>
+            <span class="pill">Recherche & Informationsmanagement</span>
+          </div>
+
+          <h3>Technische Fähigkeiten</h3>
+          <div>
+            <span class="pill">Off-Grid-Systemdesign</span>
+            <span class="pill">Solaranlageninstallation</span>
+            <span class="pill">Batteriemanagement</span>
+            <span class="pill">Technische Fehleranalyse</span>
+          </div>
+
+          <h3>Tools</h3>
+          <div>
+            <span class="pill">Microsoft Word &amp; Excel (fortgeschritten)</span>
+            <span class="pill">Google Sheets</span>
+            <span class="pill">Grundkenntnisse in SQL</span>
+          </div>
+
+          <h3>Soft Skills</h3>
+          <div>
+            <span class="pill">Kommunikation</span>
+            <span class="pill">Problemlösung</span>
+            <span class="pill">Kritisches Denken</span>
+            <span class="pill">Projektplanung</span>
+            <span class="pill">Selbstständiges Arbeiten</span>
+          </div>
+
+          <h2 style="margin-top:16px;">Ausbildung</h2>
+          <ul>
+            <li>Deutschsprachkurs (A1 bis B1 – in Ausbildung), The Update Training GmbH, Wien – erwartet 07/2026</li>
+            <li>Deutsch & Berufliche Kompetenzen – AMS Programm, Wien (10/2024)</li>
+            <li>Bachelor of Science, Werkstoffwissenschaft & Engineering, POLITEHNICA Universität, Bukarest (2007)</li>
+          </ul>
+
+          <h2 style="margin-top:16px;">Sprachen</h2>
+          <ul>
+            <li>Rumänisch – Muttersprache (C2)</li>
+            <li>Englisch – B2</li>
+            <li>Deutsch – in Ausbildung (B1)</li>
+          </ul>
+
+          <h2 style="margin-top:16px;">Medien & Inhalte</h2>
+          <ul>
+            <li>Videobearbeitung</li>
+            <li>Animation</li>
+            <li>Erstellung pädagogischer Inhalte</li>
+          </ul>
+        </div>
+      </div>
+      `,
+      en: `
+      <div class="grid">
+        <div class="card">
+          <div class="name">Catalin Iordache</div>
+          <div class="tagline">Analytical research & data professional with technical background</div>
+          <p class="contact-line">📍 Vienna 1220</p>
+          <p class="contact-line">📧 <a href="mailto:iordache.catalin@gmail.com">iordache.catalin@gmail.com</a></p>
+          <p class="contact-line">📱 068110207453</p>
+
+          <h2>Profile / About me</h2>
+          <p>
+            Analytical and independent professional with experience in research analysis, data management
+            and technical performance evaluation. Skilled in data cleaning, validation and deriving
+            actionable insights to support decision-making. Strong background in sustainable energy
+            systems, project coordination and creating clear educational content. Currently improving
+            German language skills (B1 in progress). Open to roles in data analysis, research or
+            technical support.
+          </p>
+
+          <h2>Work experience</h2>
+
+          <h3>Delivery Contractor (Part-time) – Foodora, Vienna (03/2020 – 03/2023)</h3>
+          <ul>
+            <li>Reliable and punctual delivery with excellent customer communication.</li>
+          </ul>
+
+          <h3>Self-Employed Technical Analyst & Project Coordinator – EcoRoller, Vienna (06/2019 – 11/2022)</h3>
+          <ul>
+            <li>Analysis of technical performance data and development of optimization measures to increase efficiency.</li>
+            <li>Preparation of data-driven funding applications, including feasibility studies and cost calculations.</li>
+            <li>Planning and implementation of technical and business projects with measurable outcomes.</li>
+            <li>Implementation of cost-reduction and waste-minimization strategies based on performance indicators.</li>
+            <li>Conducting research, validating information and documenting findings for decision-making processes.</li>
+          </ul>
+
+          <h3>Research Analyst – InterBiz Resco, Bucharest (07/2013 – 07/2019)</h3>
+          <ul>
+            <li>Data cleaning, validation and quality control for research datasets.</li>
+            <li>Online research and updating internal information systems.</li>
+            <li>Analysis of datasets to derive relevant insights for internal stakeholders.</li>
+            <li>Contribution to research strategies and data-driven decision-making processes.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>Skills</h2>
+
+          <h3>Data analysis</h3>
+          <div>
+            <span class="pill">Data cleaning</span>
+            <span class="pill">Data validation</span>
+            <span class="pill">Performance analysis</span>
+            <span class="pill">Reporting</span>
+            <span class="pill">Research & information management</span>
+          </div>
+
+          <h3>Technical skills</h3>
+          <div>
+            <span class="pill">Off-grid system design</span>
+            <span class="pill">Solar system installation</span>
+            <span class="pill">Battery management</span>
+            <span class="pill">Technical troubleshooting</span>
+          </div>
+
+          <h3>Tools</h3>
+          <div>
+            <span class="pill">Microsoft Word &amp; Excel (advanced)</span>
+            <span class="pill">Google Sheets</span>
+            <span class="pill">Basic SQL knowledge</span>
+          </div>
+
+          <h3>Soft skills</h3>
+          <div>
+            <span class="pill">Communication</span>
+            <span class="pill">Problem-solving</span>
+            <span class="pill">Critical thinking</span>
+            <span class="pill">Project planning</span>
+            <span class="pill">Independent work</span>
+          </div>
+
+          <h2 style="margin-top:16px;">Education</h2>
+          <ul>
+            <li>German Language Course (A1 to B1 – in progress), The Update Training GmbH, Vienna – expected 07/2026</li>
+            <li>German & Professional Skills – AMS Program, Vienna (10/2024)</li>
+            <li>Bachelor of Science, Materials Science & Engineering, POLITEHNICA University, Bucharest (2007)</li>
+          </ul>
+
+          <h2 style="margin-top:16px;">Languages</h2>
+          <ul>
+            <li>Romanian – Native (C2)</li>
+            <li>English – B2</li>
+            <li>German – B1 in training</li>
+          </ul>
+
+          <h2 style="margin-top:16px;">Media & content</h2>
+          <ul>
+            <li>Video editing</li>
+            <li>Animation</li>
+            <li>Creation of educational content</li>
+          </ul>
+        </div>
+      </div>
+      `,
+      ro: `
+      <div class="grid">
+        <div class="card">
+          <div class="name">Catalin Iordache</div>
+          <div class="tagline">Profil analitic de cercetare și date, cu background tehnic</div>
+          <p class="contact-line">📍 Viena 1220</p>
+          <p class="contact-line">📧 <a href="mailto:iordache.catalin@gmail.com">iordache.catalin@gmail.com</a></p>
+          <p class="contact-line">📱 068110207453</p>
+
+          <h2>Profil / Despre mine</h2>
+          <p>
+            Profesional analitic și independent, cu experiență în analiza de cercetare, managementul datelor
+            și evaluarea performanței tehnice. Competent în curățarea datelor, validare și extragerea de
+            informații utile pentru susținerea procesului decizional. Fundal solid în sisteme energetice
+            durabile, coordonare de proiecte și crearea de conținut educațional clar. În prezent își
+            dezvoltă activ cunoștințele de limba germană (B1 în progres). Deschis pentru roluri în analiza
+            datelor, cercetare sau suport tehnic.
+          </p>
+
+          <h2>Experiență profesională</h2>
+
+          <h3>Curier (Part-time) – Foodora, Viena (03/2020 – 03/2023)</h3>
+          <ul>
+            <li>Livrare punctuală și de încredere, cu comunicare excelentă cu clienții.</li>
+          </ul>
+
+          <h3>Analist Tehnic & Coordonator de Proiect (Independent) – EcoRoller, Viena (06/2019 – 11/2022)</h3>
+          <ul>
+            <li>Analiza datelor de performanță tehnică și dezvoltarea de măsuri de optimizare pentru creșterea eficienței.</li>
+            <li>Elaborarea cererilor de finanțare bazate pe date, inclusiv studii de fezabilitate și calcule de costuri.</li>
+            <li>Planificarea și implementarea proiectelor tehnice și de afaceri, cu rezultate măsurabile.</li>
+            <li>Implementarea strategiilor de reducere a costurilor și minimizare a deșeurilor, pe baza indicatorilor de performanță.</li>
+            <li>Realizarea de cercetări, validarea informațiilor și documentarea acestora pentru procesele decizionale.</li>
+          </ul>
+
+          <h3>Analist de Cercetare – InterBiz Resco, București (07/2013 – 07/2019)</h3>
+          <ul>
+            <li>Curățarea, validarea și controlul calității seturilor de date pentru cercetare.</li>
+            <li>Cercetare online și actualizarea sistemelor interne de informații.</li>
+            <li>Analiza seturilor de date pentru extragerea de informații relevante pentru stakeholderii interni.</li>
+            <li>Contribuție la strategiile de cercetare și procesele decizionale bazate pe date.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>Abilități</h2>
+
+          <h3>Analiză de date</h3>
+          <div>
+            <span class="pill">Curățare date</span>
+            <span class="pill">Validare date</span>
+            <span class="pill">Analiză de performanță</span>
+            <span class="pill">Raportare</span>
+            <span class="pill">Cercetare & managementul informațiilor</span>
+          </div>
+
+          <h3>Abilități tehnice</h3>
+          <div>
+            <span class="pill">Proiectare sisteme off-grid</span>
+            <span class="pill">Instalare sisteme solare</span>
+            <span class="pill">Managementul bateriilor</span>
+            <span class="pill">Depanare tehnică</span>
+          </div>
+
+          <h3>Instrumente</h3>
+          <div>
+            <span class="pill">Microsoft Word &amp; Excel (avansat)</span>
+            <span class="pill">Google Sheets</span>
+            <span class="pill">Cunoștințe de bază SQL</span>
+          </div>
+
+          <h3>Soft skills</h3>
+          <div>
+            <span class="pill">Comunicare</span>
+            <span class="pill">Rezolvarea problemelor</span>
+            <span class="pill">Gândire critică</span>
+            <span class="pill">Planificare de proiect</span>
+            <span class="pill">Lucru independent</span>
+          </div>
+
+          <h2 style="margin-top:16px;">Educație</h2>
+          <ul>
+            <li>Curs de limba germană (A1 – B1, în desfășurare), The Update Training GmbH, Viena – finalizare estimată 07/2026</li>
+            <li>Germană & Competențe Profesionale – Program AMS, Viena (10/2024)</li>
+            <li>Licență în Știința și Ingineria Materialelor, Universitatea POLITEHNICA, București (2007)</li>
+          </ul>
+
+          <h2 style="margin-top:16px;">Limbi străine</h2>
+          <ul>
+            <li>Română – Nativ (C2)</li>
+            <li>Engleză – B2</li>
+            <li>Germană – B1 în curs de învățare</li>
+          </ul>
+
+          <h2 style="margin-top:16px;">Media & conținut</h2>
+          <ul>
+            <li>Editare video</li>
+            <li>Animație</li>
+            <li>Crearea de materiale educaționale</li>
+          </ul>
+        </div>
+      </div>
+      `
+    };
+
+    const terminalMeta = {
+      de: {
+        title: "~/catalin/catalin_cv.txt",
+        user: "catalin@pc",
+        command: " cat catalin_cv.txt"
+      },
+      en: {
+        title: "~/catalin/catalin_cv_en.txt",
+        user: "catalin@pc",
+        command: " cat catalin_cv_en.txt"
+      },
+      ro: {
+        title: "~/catalin/catalin_cv_ro.txt",
+        user: "catalin@pc",
+        command: " cat catalin_cv_ro.txt"
+      }
+    };
+
+    const el = document.getElementById("typewriter");
+    const portfolio = document.getElementById("portfolio");
+    const langSelect = document.getElementById("langSelect");
+    const terminalTitle = document.getElementById("terminalTitle");
+    const promptUser = document.getElementById("promptUser");
+    const promptCommand = document.getElementById("promptCommand");
+
+    let currentLang = "de";
+    let i = 0;
+    let typingTimeout = null;
+    let dotsInterval = null;
+
+    function renderPortfolio() {
+      portfolio.innerHTML = portfolioTemplates[currentLang];
+    }
+
+    function clearTyping() {
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+        typingTimeout = null;
+      }
+      if (dotsInterval) {
+        clearInterval(dotsInterval);
+        dotsInterval = null;
+      }
+      el.innerHTML = "";
+    }
+
+    function startTyping() {
+      clearTyping();
+      i = 0;
+      const cvText = cvTexts[currentLang];
+
+      function type() {
+        if (i < cvText.length) {
+          el.textContent += cvText.charAt(i);
+          i++;
+          typingTimeout = setTimeout(type, 35); // slower typing
+        } else {
+          const cursor = document.createElement("span");
+          cursor.className = "cursor";
+          cursor.innerHTML = " ";
+          el.appendChild(cursor);
+
+          const loadingDots = document.createElement("div");
+          loadingDots.style.color = "#7dffcf";
+          loadingDots.style.marginTop = "10px";
+          loadingDots.style.fontSize = "14px";
+          loadingDots.style.opacity = "0.8";
+          loadingDots.innerHTML = "System awaiting input<span id='dots'>.</span>";
+          el.appendChild(loadingDots);
+
+          let dotCount = 1;
+          dotsInterval = setInterval(() => {
+            dotCount = (dotCount % 3) + 1;
+            const dotsEl = document.getElementById("dots");
+            if (dotsEl) {
+              dotsEl.innerHTML = ".".repeat(dotCount);
+            }
+          }, 500);
+
+          setTimeout(() => {
+            portfolio.classList.add("visible");
+          }, 1200);
+        }
+      }
+
+      type();
+    }
+
+    function applyTerminalMeta() {
+      const meta = terminalMeta[currentLang];
+      terminalTitle.textContent = meta.title;
+      promptUser.textContent = meta.user;
+      promptCommand.textContent = meta.command;
+    }
+
+    langSelect.addEventListener("change", () => {
+      currentLang = langSelect.value;
+      applyTerminalMeta();
+      renderPortfolio();
+      startTyping();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    // Initial render
+    applyTerminalMeta();
+    renderPortfolio();
+    startTyping();
+  </script>
+</body>
+</html>
