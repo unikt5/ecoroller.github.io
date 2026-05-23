@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EcoRoller System</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+background:radial-gradient(circle at top,#1a1030 0,#05030a 55%,#020107 100%);
+font-family:"Fira Code",monospace;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+padding:20px;
+color:#e5e5ff;
+}
+
+.wrapper{
+width:100%;
+max-width:1000px;
+}
+
+.terminal{
+
+background:rgba(5,3,15,.95);
+
+border:1px solid rgba(163,94,255,.6);
+
+box-shadow:
+0 0 25px rgba(163,94,255,.6),
+0 0 60px rgba(0,255,255,.25);
+
+padding:20px;
+
+border-radius:12px;
+
+overflow:hidden;
+
+position:relative;
+}
+
+.terminal:before{
+
+content:"";
+
+position:absolute;
+
+inset:0;
+
+background:
+repeating-linear-gradient(
+to bottom,
+rgba(255,255,255,.04),
+rgba(255,255,255,.04) 1px,
+transparent 1px,
+transparent 3px
+);
+
+opacity:.3;
+
+pointer-events:none;
+
+}
+
+.header{
+
+display:flex;
+
+gap:8px;
+
+margin-bottom:15px;
+
+font-size:12px;
+
+color:#aaa;
+
+align-items:center;
+
+}
+
+.dot{
+
+width:10px;
+height:10px;
+border-radius:50%;
+
+}
+
+.red{background:#ff5f57;}
+.yellow{background:#febc2e;}
+.green{background:#28c840;}
+
+.title{
+
+margin-left:8px;
+
+}
+
+.prompt{
+
+color:#7dffcf;
+
+margin-bottom:12px;
+
+}
+
+.label{
+
+color:#5af2ff;
+
+}
+
+#screen{
+
+white-space:pre-wrap;
+
+line-height:1.5;
+
+min-height:450px;
+
+color:#bafff2;
+
+}
+
+.cursor{
+
+display:inline-block;
+
+width:8px;
+
+height:16px;
+
+background:#7dffcf;
+
+margin-left:3px;
+
+animation:blink .9s infinite;
+
+}
+
+@keyframes blink{
+
+0%,50%{opacity:1;}
+50.1%,100%{opacity:0;}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<div class="terminal">
+
+<div class="header">
+
+<div class="dot red"></div>
+<div class="dot yellow"></div>
+<div class="dot green"></div>
+
+<div class="title">
+~/ecoroller/security.log
+</div>
+
+</div>
+
+<div class="prompt">
+<span class="label">
+visitor@ecoroller
+</span>:~$ execute scan.sh
+</div>
+
+<div id="screen"></div>
+
+</div>
+</div>
+
+<script>
+
+const screen=
+document.getElementById("screen");
+
+let content="";
+
+function render(){
+
+screen.innerHTML=
+content+
+'<span class="cursor"></span>';
+
+}
+
+async function run(){
+
+let city="Unknown";
+let country="Earth";
+
+try{
+
+const r=
+await fetch(
+"https://ipapi.co/json/"
+);
+
+const data=
+await r.json();
+
+city=
+data.city||"Unknown";
+
+country=
+data.country_name||"Earth";
+
+}catch(e){
+
+console.log(
+"Geo unavailable"
+);
+
+}
+
+const message=`
+
+[ System Status: Loading next section ]
+[ Awaiting new data... ]
+[ ... ]
+
+System awaiting input...
+
+
+[ OK ] Access granted...
+
+[ WARNING ]
+
+Suspicious activity detected.
+
+Congratulations.
+
+You've been hacked.*
+
+*probably not.
+
+Scanning visitor profile...
+
+CITY: ${city}
+
+COUNTRY: ${country}
+
+Analyzing behavior...
+
+Searching:
+"how to get rich fast"
+
+Searching:
+"best pizza near me"
+
+Searching:
+"why is laptop making strange noises"
+
+Interesting observations:
+
+- too many browser tabs
+- coffee levels unstable
+- update notifications ignored
+
+Deploying AI response...
+
+CRITICAL EVENT DETECTED
+
+`;
+
+await type(message);
+
+await countdown();
+
+content += `
+
+ABORT SIGNAL RECEIVED...
+
+Shutdown cancelled.
+
+Diagnosis:
+
+No hacking detected.
+
+Only curiosity detected 😄
+
+System awaiting input...
+
+`;
+
+render();
+
+}
+
+function type(text){
+
+return new Promise(resolve=>{
+
+let i=0;
+
+function next(){
+
+if(i<text.length){
+
+content+=text[i];
+
+render();
+
+i++;
+
+setTimeout(next,28);
+
+}else{
+
+resolve();
+
+}
+
+}
+
+next();
+
+});
+
+}
+
+function countdown(){
+
+return new Promise(resolve=>{
+
+let n=10;
+
+const timer=
+setInterval(()=>{
+
+content+=
+`\nYOUR SYSTEM WILL SHUT DOWN IN ${n}`;
+
+render();
+
+n--;
+
+if(n<0){
+
+clearInterval(timer);
+
+resolve();
+
+}
+
+},1000);
+
+});
+
+}
+
+run();
+
+</script>
+
+</body>
+</html>
