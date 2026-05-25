@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ECOROLLER Cyber Assembly</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+background:#03060d;
+overflow:hidden;
+font-family:Consolas,monospace;
+}
+canvas{position:absolute;inset:0}
+
+.hud{
+position:absolute;
+top:20px;
+left:30px;
+color:#00ff99;
+text-shadow:0 0 10px #00ff99;
+font-size:14px;
+line-height:1.8;
+z-index:10;
+}
+
+.scan{
+position:absolute;
+height:2px;
+width:100%;
+background:#00ff88;
+box-shadow:0 0 30px #00ff88;
+animation:scan 4s linear infinite;
+opacity:.5;
+}
+@keyframes scan{from{top:-5%}to{top:105%}}
+
+.scene{
+position:relative;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+svg{width:1100px;height:650px}
+
+.part{
+opacity:0;
+animation:assemble 1.7s forwards;
+filter:drop-shadow(0 0 12px #00ffee);
+}
+
+@keyframes assemble{
+from{
+opacity:0;
+transform:translate(var(--x),var(--y)) rotate(720deg) scale(.1);
+}
+to{
+opacity:1;
+transform:translate(0,0) rotate(0deg) scale(1)
+}
+}
+
+.w1{animation-delay:.5s}
+.w2{animation-delay:1.2s}
+.frame{animation-delay:2s}
+.seat{animation-delay:2.8s}
+.handle{animation-delay:3.5s}
+.pedal{animation-delay:4.2s}
+.fork{animation-delay:5s}
+
+.logo{
+position:absolute;
+bottom:70px;
+left:50%;
+transform:translateX(-50%);
+font-size:54px;
+letter-spacing:12px;
+font-weight:bold;
+color:#00ff88;
+opacity:0;
+text-shadow:
+0 0 10px #00ff88,
+0 0 30px #00ff88,
+0 0 80px #00ff88;
+animation:showLogo 2s forwards;
+animation-delay:7s;
+}
+
+@keyframes showLogo{
+0%{opacity:0;transform:translateX(-50%) scale(.4)}
+50%{opacity:1;transform:translateX(-50%) scale(1.2)}
+100%{opacity:1;transform:translateX(-50%) scale(1)}
+}
+
+.ring{
+stroke:#00ffcc;
+stroke-dasharray:10;
+animation:spin 8s linear infinite;
+transform-origin:center;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.riderWrap{position:absolute;left:-500px;bottom:180px;opacity:0;animation:ride 6s linear forwards;animation-delay:9s;z-index:20}
+@keyframes ride{
+0%{left:-500px;opacity:1}
+100%{left:130% ;opacity:1}
+}
+.rider{width:260px;height:140px}
+.dust{
+position:absolute;
+bottom:200px;
+left:50px;
+font-size:50px;
+letter-spacing:8px;
+color:rgba(0,255,150,.25);
+filter:blur(4px);
+opacity:0;
+text-shadow:0 0 30px #00ff88;
+animation:dustFade 5s forwards;
+animation-delay:10s;
+}
+@keyframes dustFade{
+0%{opacity:0;transform:translateX(-50px) scale(.5)}
+30%{opacity:1}
+100%{opacity:0;transform:translateX(120px) scale(1.5)}
+}
+</style>
+</head>
+<body>
+<canvas id='matrix'></canvas>
+<div class='scan'></div>
+
+<div class='hud'>
+SYSTEM BOOT OK<br>
+AI VISUAL ENGINE : ONLINE<br>
+ASSEMBLY PROTOCOL : ECOROLLER<br>
+STATUS: BUILDING...
+</div>
+
+<div class='scene'>
+<svg viewBox='0 0 1100 650'>
+
+<circle class='ring' cx='550' cy='300' r='220' fill='none'/>
+
+<circle class='part w1' style='--x:-900px;--y:400px' cx='350' cy='360' r='90' stroke='#00ffee' stroke-width='8' fill='none'/>
+<circle class='part w2' style='--x:900px;--y:400px' cx='720' cy='360' r='90' stroke='#00ffee' stroke-width='8' fill='none'/>
+
+<g class='part frame' style='--x:-600px;--y:-400px'>
+<line x1='350' y1='360' x2='500' y2='230' stroke='#00ff99' stroke-width='10'/>
+<line x1='500' y1='230' x2='720' y2='360' stroke='#00ff99' stroke-width='10'/>
+<line x1='350' y1='360' x2='580' y2='360' stroke='#00ff99' stroke-width='10'/>
+<line x1='500' y1='230' x2='580' y2='360' stroke='#00ff99' stroke-width='10'/>
+</g>
+
+<line class='part seat' style='--x:-400px;--y:-300px' x1='500' y1='230' x2='470' y2='190' stroke='#00ffff' stroke-width='8'/>
+
+<g class='part handle' style='--x:700px;--y:-500px'>
+<line x1='720' y1='270' x2='790' y2='180' stroke='#00ffff' stroke-width='8'/>
+<line x1='770' y1='180' x2='830' y2='180' stroke='#00ffff' stroke-width='8'/>
+</g>
+
+<line class='part pedal' style='--x:0;--y:500px' x1='580' y1='360' x2='620' y2='390' stroke='#00ffff' stroke-width='8'/>
+<line class='part fork' style='--x:800px;--y:-400px' x1='720' y1='360' x2='720' y2='270' stroke='#00ff88' stroke-width='8'/>
+
+</svg>
+</div>
+
+<div class='logo'>ECOROLLER</div>
+
+<script>
+const c=document.getElementById('matrix');
+const x=c.getContext('2d');
+function r(){c.width=innerWidth;c.height=innerHeight}
+r();
+onresize=r;
+const letters='01ABCDEFGHIJKLMNOPQRSTUVWXYZ<>[]{}#$%';
+const size=16;
+const cols=Math.floor(innerWidth/size);
+const arr=[];
+for(let i=0;i<cols;i++)arr[i]=1;
+
+function draw(){
+x.fillStyle='rgba(0,0,0,.06)';
+x.fillRect(0,0,c.width,c.height);
+x.fillStyle='#00ff66';
+x.font=size+'px monospace';
+for(let i=0;i<arr.length;i++){
+let t=letters[Math.floor(Math.random()*letters.length)]
+x.fillText(t,i*size,arr[i]*size)
+if(arr[i]*size>c.height&&Math.random()>.985)arr[i]=0;
+arr[i]++;
+}
+requestAnimationFrame(draw)
+}
+draw();
+</script>
+<div class='riderWrap'>
+<svg class='rider' viewBox='0 0 260 140'>
+<circle cx='70' cy='30' r='12' fill='#00ff88'/>
+<line x1='70' y1='42' x2='95' y2='75' stroke='#00ff88' stroke-width='4'/>
+<line x1='95' y1='75' x2='120' y2='85' stroke='#00ff88' stroke-width='4'/>
+<line x1='85' y1='60' x2='120' y2='45' stroke='#00ff88' stroke-width='4'/>
+<line x1='95' y1='75' x2='80' y2='110' stroke='#00ff88' stroke-width='4'/>
+<line x1='95' y1='75' x2='125' y2='110' stroke='#00ff88' stroke-width='4'/>
+
+<circle cx='110' cy='105' r='25' stroke='#00ffee' stroke-width='3' fill='none'/>
+<circle cx='200' cy='105' r='25' stroke='#00ffee' stroke-width='3' fill='none'/>
+<line x1='110' y1='105' x2='150' y2='70' stroke='#00ff88' stroke-width='4'/>
+<line x1='150' y1='70' x2='200' y2='105' stroke='#00ff88' stroke-width='4'/>
+<line x1='110' y1='105' x2='165' y2='105' stroke='#00ff88' stroke-width='4'/>
+</svg>
+</div>
+<div class='dust'>ENJOY THE RIDE</div>
+</body>
+</html>
