@@ -35,14 +35,46 @@ body {
 canvas {
   position: fixed;
   inset: 0;
+  z-index: 1;
+}
+
+.musicBg {
+  position: fixed;
+  inset: 0;
   z-index: 0;
+  opacity: .12;
+  pointer-events: none;
+  filter: saturate(1.4) contrast(1.15);
+  background: #000;
+}
+
+.musicBg iframe {
+  width: 100vw;
+  height: 100vh;
+  border: 0;
+  transform: scale(1.2);
+}
+
+.musicBtn {
+  position: fixed;
+  right: 28px;
+  top: 74px;
+  z-index: 10;
+  padding: 9px 13px;
+  border: 1px solid rgba(0,255,238,.55);
+  color: var(--mint);
+  background: rgba(0,18,22,.56);
+  text-decoration: none;
+  font-size: 13px;
+  text-shadow: 0 0 10px var(--mint);
+  box-shadow: 0 0 22px rgba(0,255,238,.15) inset;
 }
 
 .grid {
   position: fixed;
   inset: auto 0 0;
   height: 42vh;
-  z-index: 1;
+  z-index: 2;
   background:
     linear-gradient(rgba(0,255,136,.16) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0,255,136,.16) 1px, transparent 1px);
@@ -56,7 +88,7 @@ canvas {
   position: fixed;
   left: 0;
   top: -10%;
-  z-index: 4;
+  z-index: 5;
   width: 100%;
   height: 2px;
   background: var(--green);
@@ -73,7 +105,7 @@ canvas {
   position: fixed;
   top: 22px;
   left: 26px;
-  z-index: 8;
+  z-index: 10;
   width: min(390px, calc(100vw - 52px));
   padding-left: 16px;
   border-left: 2px solid var(--green);
@@ -109,7 +141,7 @@ canvas {
 
 .scene {
   position: relative;
-  z-index: 3;
+  z-index: 4;
   min-height: 100vh;
   display: grid;
   place-items: center;
@@ -156,7 +188,6 @@ svg {
 .handlebar { animation-delay: 4.35s; }
 .battery { animation-delay: 4.95s; }
 .lights { animation-delay: 5.55s; }
-.riderPart { animation-delay: 6.4s; }
 
 .line {
   stroke-linecap: round;
@@ -285,7 +316,7 @@ svg {
   position: fixed;
   left: 50%;
   bottom: 52px;
-  z-index: 8;
+  z-index: 10;
   transform: translateX(-50%);
   font-size: clamp(34px, 7vw, 70px);
   font-weight: 900;
@@ -310,7 +341,7 @@ svg {
   position: fixed;
   right: 28px;
   top: 24px;
-  z-index: 8;
+  z-index: 10;
   padding: 10px 14px;
   border: 1px solid rgba(0,255,238,.55);
   color: var(--mint);
@@ -331,7 +362,8 @@ svg {
     left: 14px;
   }
 
-  .ready {
+  .ready,
+  .musicBtn {
     display: none;
   }
 
@@ -350,6 +382,16 @@ svg {
 </head>
 
 <body>
+
+<div class="musicBg">
+  <iframe
+    src="https://www.youtube.com/embed/live_stream?channel=UCJIlkaXVl-6vU3ghQkr51nQ&autoplay=1&mute=1&controls=0&playsinline=1"
+    title="Music Lab Chill live background"
+    allow="autoplay; encrypted-media; picture-in-picture"
+    referrerpolicy="strict-origin-when-cross-origin">
+  </iframe>
+</div>
+
 <canvas id="matrix"></canvas>
 <div class="grid"></div>
 <div class="scan"></div>
@@ -364,6 +406,10 @@ svg {
 </div>
 
 <div class="ready">SLOW MOTION WALK-DRIVE READY</div>
+
+<a class="musicBtn" href="https://www.youtube.com/@MusicLabChill/live" target="_blank">
+  MUSIC LIVE
+</a>
 
 <main class="scene">
 <svg class="assembly" viewBox="0 0 1100 650" aria-label="ECOROLLER walking bike assembly">
@@ -429,13 +475,30 @@ svg {
       <text x="486" y="408" fill="#eafff8" font-size="18" font-weight="700">WALK BELT</text>
     </g>
 
-    <g class="part motor" style="--x:-120px;--y:500px">
-      <rect x="420" y="305" width="185" height="82" rx="12"
-            fill="rgba(0,22,24,.92)" stroke="#00ffee" stroke-width="5" filter="url(#glow)"/>
-      <circle cx="458" cy="346" r="22" fill="none" stroke="#00ff88" stroke-width="5"/>
-      <path d="M444 346 H472" stroke="#00ffee" stroke-width="5" stroke-linecap="round"/>
-      <text x="492" y="340" fill="#00ff88" font-size="22" font-weight="900">ECOROLLER</text>
-      <text x="492" y="363" fill="#58cfff" font-size="13">ELECTRIC WALK MOTOR</text>
+    <g class="part motor" style="--x:-80px;--y:500px">
+      <rect x="455" y="318" width="178" height="70" rx="12"
+            fill="rgba(0,22,24,.92)"
+            stroke="#00ffee"
+            stroke-width="5"
+            filter="url(#glow)" />
+
+      <circle cx="492" cy="353" r="19"
+              fill="none"
+              stroke="#00ff88"
+              stroke-width="5" />
+
+      <path d="M480 353 H504"
+            stroke="#00ffee"
+            stroke-width="5"
+            stroke-linecap="round" />
+
+      <text x="525" y="348" fill="#00ff88" font-size="21" font-weight="900">
+        ECOROLLER
+      </text>
+
+      <text x="525" y="370" fill="#58cfff" font-size="12">
+        WALK DRIVE MOTOR
+      </text>
     </g>
 
     <g class="part rearFrame pulse" style="--x:-700px;--y:-390px" stroke="url(#neon)" stroke-width="9" fill="none" filter="url(#glow)">
@@ -460,10 +523,31 @@ svg {
       <circle cx="720" cy="178" r="12" fill="#001d20" stroke="#00ff88" stroke-width="4"/>
     </g>
 
-    <g class="part battery" style="--x:0;--y:-450px">
-      <rect x="615" y="305" width="74" height="45" rx="8"
-            fill="rgba(0,255,136,.12)" stroke="#00ff88" stroke-width="4"/>
-      <text x="630" y="334" fill="#00ff88" font-size="14" font-weight="700">48V</text>
+    <g class="part battery" style="--x:-500px;--y:-420px">
+      <rect x="275" y="270" width="112" height="58" rx="10"
+            fill="rgba(0,255,136,.12)"
+            stroke="#00ff88"
+            stroke-width="4"
+            filter="url(#glow)" />
+
+      <rect x="292" y="285" width="78" height="20" rx="4"
+            fill="rgba(0,255,238,.18)"
+            stroke="#00ffee"
+            stroke-width="2" />
+
+      <text x="294" y="319" fill="#00ff88" font-size="15" font-weight="900">
+        48V REAR
+      </text>
+
+      <line x1="330" y1="328" x2="330" y2="405"
+            stroke="#00ff88"
+            stroke-width="5"
+            stroke-linecap="round" />
+
+      <line x1="386" y1="298" x2="432" y2="315"
+            stroke="#00ffee"
+            stroke-width="4"
+            stroke-linecap="round" />
     </g>
 
     <g class="part lights" style="--x:700px;--y:0">
@@ -543,7 +627,7 @@ const phases = [
   [2200, "WALK BELT INSTALLED"],
   [3100, "ECOROLLER MOTOR ONLINE"],
   [4100, "UPRIGHT STEERING SYNCED"],
-  [5350, "LIGHTS AND BATTERY ACTIVE"],
+  [5350, "REAR BATTERY ACTIVE"],
   [7100, "RIDER BALANCE STABLE"],
   [8200, "SLOW MOTION WALK-DRIVE"]
 ];
@@ -558,5 +642,6 @@ resizeMatrix();
 drawMatrix();
 addEventListener("resize", resizeMatrix);
 </script>
+
 </body>
 </html>
