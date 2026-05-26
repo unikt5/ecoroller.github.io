@@ -1,216 +1,604 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>ECOROLLER Cyber Assembly</title>
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-background:#03060d;
-overflow:hidden;
-font-family:Consolas,monospace;
-}
-canvas{position:absolute;inset:0}
-
-.hud{
-position:absolute;
-top:20px;
-left:30px;
-color:#00ff99;
-text-shadow:0 0 10px #00ff99;
-font-size:14px;
-line-height:1.8;
-z-index:10;
+:root {
+  --bg: #03060d;
+  --green: #00ff88;
+  --mint: #00ffee;
+  --blue: #55ccff;
+  --danger: #ff3366;
+  --text: #bfffee;
 }
 
-.scan{
-position:absolute;
-height:2px;
-width:100%;
-background:#00ff88;
-box-shadow:0 0 30px #00ff88;
-animation:scan 4s linear infinite;
-opacity:.5;
-}
-@keyframes scan{from{top:-5%}to{top:105%}}
-
-.scene{
-position:relative;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-}
-svg{width:1100px;height:650px}
-
-.part{
-opacity:0;
-animation:assemble 1.7s forwards;
-filter:drop-shadow(0 0 12px #00ffee);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@keyframes assemble{
-from{
-opacity:0;
-transform:translate(var(--x),var(--y)) rotate(720deg) scale(.1);
-}
-to{
-opacity:1;
-transform:translate(0,0) rotate(0deg) scale(1)
-}
-}
-
-.w1{animation-delay:.5s}
-.w2{animation-delay:1.2s}
-.frame{animation-delay:2s}
-.seat{animation-delay:2.8s}
-.handle{animation-delay:3.5s}
-.pedal{animation-delay:4.2s}
-.fork{animation-delay:5s}
-
-.logo{
-position:absolute;
-bottom:70px;
-left:50%;
-transform:translateX(-50%);
-font-size:54px;
-letter-spacing:12px;
-font-weight:bold;
-color:#00ff88;
-opacity:0;
-text-shadow:
-0 0 10px #00ff88,
-0 0 30px #00ff88,
-0 0 80px #00ff88;
-animation:showLogo 2s forwards;
-animation-delay:7s;
+body {
+  min-height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 55%, rgba(0, 255, 160, .14), transparent 34%),
+    radial-gradient(circle at 50% 85%, rgba(0, 238, 255, .08), transparent 28%),
+    var(--bg);
+  font-family: Consolas, Monaco, monospace;
+  color: var(--text);
 }
 
-@keyframes showLogo{
-0%{opacity:0;transform:translateX(-50%) scale(.4)}
-50%{opacity:1;transform:translateX(-50%) scale(1.2)}
-100%{opacity:1;transform:translateX(-50%) scale(1)}
+canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
 }
 
-.ring{
-stroke:#00ffcc;
-stroke-dasharray:10;
-animation:spin 8s linear infinite;
-transform-origin:center;
+.scene {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  perspective: 900px;
 }
-@keyframes spin{to{transform:rotate(360deg)}}
 
-.riderWrap{position:absolute;left:-500px;bottom:180px;opacity:0;animation:ride 6s linear forwards;animation-delay:9s;z-index:20}
-@keyframes ride{
-0%{left:-500px;opacity:1}
-100%{left:130% ;opacity:1}
+.assembly {
+  width: min(1120px, 96vw);
+  height: auto;
+  filter: drop-shadow(0 0 18px rgba(0, 255, 200, .45));
+  animation: cameraSettle 1.8s ease-out 6.9s both;
 }
-.rider{width:260px;height:140px}
-.dust{
-position:absolute;
-bottom:200px;
-left:50px;
-font-size:50px;
-letter-spacing:8px;
-color:rgba(0,255,150,.25);
-filter:blur(4px);
-opacity:0;
-text-shadow:0 0 30px #00ff88;
-animation:dustFade 5s forwards;
-animation-delay:10s;
+
+@keyframes cameraSettle {
+  0%, 100% { transform: scale(1) rotateX(0deg); }
+  35% { transform: scale(1.035) rotateX(2deg); }
 }
-@keyframes dustFade{
-0%{opacity:0;transform:translateX(-50px) scale(.5)}
-30%{opacity:1}
-100%{opacity:0;transform:translateX(120px) scale(1.5)}
+
+.hud {
+  position: fixed;
+  top: 22px;
+  left: 26px;
+  z-index: 5;
+  width: min(360px, calc(100vw - 52px));
+  padding-left: 16px;
+  border-left: 2px solid var(--green);
+  color: var(--green);
+  text-shadow: 0 0 10px var(--green);
+  font-size: 14px;
+  line-height: 1.8;
+  letter-spacing: .04em;
+}
+
+.hud strong {
+  color: #eafff7;
+}
+
+.progress {
+  width: 100%;
+  height: 7px;
+  margin-top: 10px;
+  border: 1px solid rgba(0, 255, 136, .5);
+  background: rgba(0, 0, 0, .55);
+  box-shadow: 0 0 18px rgba(0, 255, 136, .2) inset;
+}
+
+.progress span {
+  display: block;
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), var(--mint), var(--blue));
+  box-shadow: 0 0 18px var(--mint);
+  animation: load 7s steps(7) forwards;
+}
+
+@keyframes load {
+  to { width: 100%; }
+}
+
+.status {
+  animation: statusText 8.2s steps(1) forwards;
+}
+
+.status::after {
+  content: "INITIALIZING";
+}
+
+@keyframes statusText {
+  0% { content: "INITIALIZING"; }
+}
+
+.scan {
+  position: fixed;
+  z-index: 4;
+  left: 0;
+  top: -8%;
+  width: 100%;
+  height: 2px;
+  opacity: .45;
+  background: var(--green);
+  box-shadow: 0 0 28px var(--green), 0 0 80px var(--mint);
+  animation: scan 3.7s linear infinite;
+}
+
+@keyframes scan {
+  to { top: 108%; }
+}
+
+.grid {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 1;
+  height: 42vh;
+  background:
+    linear-gradient(rgba(0, 255, 136, .16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 136, .16) 1px, transparent 1px);
+  background-size: 52px 34px;
+  transform: perspective(420px) rotateX(64deg);
+  transform-origin: bottom;
+  opacity: .34;
+  filter: drop-shadow(0 0 20px rgba(0,255,136,.35));
+}
+
+.part {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: assemble 1.55s cubic-bezier(.12, .9, .18, 1.12) forwards;
+}
+
+@keyframes assemble {
+  0% {
+    opacity: 0;
+    transform: translate(var(--x), var(--y)) rotate(640deg) scale(.08);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(-8deg) scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+}
+
+.w1 { animation-delay: .45s; }
+.w2 { animation-delay: 1.05s; }
+.frame { animation-delay: 1.85s; }
+.motor { animation-delay: 2.55s; }
+.seat { animation-delay: 3.1s; }
+.fork { animation-delay: 3.65s; }
+.handle { animation-delay: 4.25s; }
+.pedal { animation-delay: 4.9s; }
+.chain { animation-delay: 5.45s; }
+.lights { animation-delay: 6.05s; }
+
+.snap {
+  opacity: 0;
+  transform-origin: center;
+  animation: snapFlash .55s ease-out forwards;
+}
+
+.s1 { animation-delay: 1.95s; }
+.s2 { animation-delay: 2.65s; }
+.s3 { animation-delay: 3.75s; }
+.s4 { animation-delay: 6.1s; }
+
+@keyframes snapFlash {
+  0% { opacity: 0; transform: scale(.3); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: scale(2.4); }
+}
+
+.ring {
+  stroke: var(--mint);
+  stroke-width: 2;
+  stroke-dasharray: 12 18;
+  fill: none;
+  opacity: .65;
+  transform-origin: 550px 310px;
+  animation: ringSpin 9s linear infinite;
+}
+
+.ring.secondary {
+  stroke: var(--blue);
+  stroke-dasharray: 4 26;
+  animation-duration: 14s;
+  animation-direction: reverse;
+  opacity: .45;
+}
+
+@keyframes ringSpin {
+  to { transform: rotate(360deg); }
+}
+
+.wheelSpin {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wheelRun .85s linear infinite;
+  animation-delay: 7.3s;
+}
+
+@keyframes wheelRun {
+  to { transform: rotate(360deg); }
+}
+
+.glowLine {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 7px currentColor);
+}
+
+.framePulse {
+  animation: framePulse 1.7s ease-in-out infinite;
+  animation-delay: 7.2s;
+}
+
+@keyframes framePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .62; }
+}
+
+.logo {
+  position: fixed;
+  z-index: 5;
+  left: 50%;
+  bottom: 58px;
+  transform: translateX(-50%);
+  font-size: clamp(34px, 7vw, 72px);
+  font-weight: 900;
+  letter-spacing: clamp(5px, 1.4vw, 14px);
+  color: var(--green);
+  opacity: 0;
+  text-shadow:
+    0 0 10px var(--green),
+    0 0 35px var(--green),
+    0 0 90px var(--mint);
+  animation: showLogo 1.8s cubic-bezier(.1, .9, .2, 1.2) forwards;
+  animation-delay: 7s;
+}
+
+@keyframes showLogo {
+  0% { opacity: 0; transform: translateX(-50%) scale(.42); }
+  55% { opacity: 1; transform: translateX(-50%) scale(1.15); }
+  100% { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+
+.riderWrap {
+  position: fixed;
+  z-index: 6;
+  left: -420px;
+  bottom: 165px;
+  width: 310px;
+  opacity: 0;
+  filter: drop-shadow(0 0 16px rgba(0, 255, 200, .8));
+  animation: ride 5.2s linear forwards;
+  animation-delay: 9s;
+}
+
+@keyframes ride {
+  0% { left: -420px; opacity: 1; }
+  100% { left: 125vw; opacity: 1; }
+}
+
+.dust {
+  position: fixed;
+  z-index: 5;
+  bottom: 190px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(0, 255, 170, .28);
+  font-size: clamp(28px, 5vw, 58px);
+  font-weight: 900;
+  letter-spacing: .2em;
+  text-shadow: 0 0 28px var(--green);
+  filter: blur(3px);
+  opacity: 0;
+  white-space: nowrap;
+  animation: dustFade 4.6s ease-out forwards;
+  animation-delay: 10.1s;
+}
+
+@keyframes dustFade {
+  0% { opacity: 0; transform: translateX(-55%) scale(.55); }
+  32% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-43%) scale(1.35); }
+}
+
+.ready {
+  position: fixed;
+  z-index: 5;
+  right: 28px;
+  top: 26px;
+  padding: 10px 14px;
+  border: 1px solid rgba(0, 255, 238, .55);
+  color: var(--mint);
+  background: rgba(0, 15, 18, .35);
+  box-shadow: 0 0 24px rgba(0,255,238,.16) inset;
+  text-shadow: 0 0 10px var(--mint);
+  opacity: 0;
+  animation: readyShow .8s ease forwards;
+  animation-delay: 7.65s;
+}
+
+@keyframes readyShow {
+  to { opacity: 1; }
+}
+
+@media (max-width: 700px) {
+  .hud {
+    font-size: 11px;
+    top: 14px;
+    left: 14px;
+    width: calc(100vw - 28px);
+  }
+
+  .ready {
+    display: none;
+  }
+
+  .logo {
+    bottom: 34px;
+  }
+
+  .riderWrap {
+    bottom: 112px;
+    width: 230px;
+  }
+
+  .dust {
+    bottom: 132px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
 }
 </style>
 </head>
+
 <body>
-<canvas id='matrix'></canvas>
-<div class='scan'></div>
+<canvas id="matrix"></canvas>
+<div class="grid"></div>
+<div class="scan"></div>
 
-<div class='hud'>
-SYSTEM BOOT OK<br>
-AI VISUAL ENGINE : ONLINE<br>
-ASSEMBLY PROTOCOL : ECOROLLER<br>
-STATUS: BUILDING...
+<div class="hud">
+  <strong>ECOROLLER OS</strong><br>
+  AI VISUAL ENGINE : ONLINE<br>
+  MAG-RAIL ASSEMBLY : ACTIVE<br>
+  ENERGY CORE : CHARGING<br>
+  STATUS : <span id="status">INITIALIZING</span>
+  <div class="progress"><span></span></div>
 </div>
 
-<div class='scene'>
-<svg viewBox='0 0 1100 650'>
+<div class="ready">READY TO RIDE</div>
 
-<circle class='ring' cx='550' cy='300' r='220' fill='none'/>
+<main class="scene">
+  <svg class="assembly" viewBox="0 0 1100 650" aria-label="ECOROLLER cyber assembly animation">
+    <defs>
+      <linearGradient id="bikeGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#00ff88"/>
+        <stop offset="55%" stop-color="#00ffee"/>
+        <stop offset="100%" stop-color="#55ccff"/>
+      </linearGradient>
 
-<circle class='part w1' style='--x:-900px;--y:400px' cx='350' cy='360' r='90' stroke='#00ffee' stroke-width='8' fill='none'/>
-<circle class='part w2' style='--x:900px;--y:400px' cx='720' cy='360' r='90' stroke='#00ffee' stroke-width='8' fill='none'/>
+      <filter id="softGlow">
+        <feGaussianBlur stdDeviation="4" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
 
-<g class='part frame' style='--x:-600px;--y:-400px'>
-<line x1='350' y1='360' x2='500' y2='230' stroke='#00ff99' stroke-width='10'/>
-<line x1='500' y1='230' x2='720' y2='360' stroke='#00ff99' stroke-width='10'/>
-<line x1='350' y1='360' x2='580' y2='360' stroke='#00ff99' stroke-width='10'/>
-<line x1='500' y1='230' x2='580' y2='360' stroke='#00ff99' stroke-width='10'/>
-</g>
+    <ellipse cx="550" cy="472" rx="350" ry="38" fill="rgba(0,255,180,.08)" />
+    <ellipse cx="550" cy="472" rx="285" ry="18" fill="none" stroke="rgba(0,255,238,.22)" stroke-width="2" />
 
-<line class='part seat' style='--x:-400px;--y:-300px' x1='500' y1='230' x2='470' y2='190' stroke='#00ffff' stroke-width='8'/>
+    <circle class="ring" cx="550" cy="310" r="230"/>
+    <circle class="ring secondary" cx="550" cy="310" r="270"/>
 
-<g class='part handle' style='--x:700px;--y:-500px'>
-<line x1='720' y1='270' x2='790' y2='180' stroke='#00ffff' stroke-width='8'/>
-<line x1='770' y1='180' x2='830' y2='180' stroke='#00ffff' stroke-width='8'/>
-</g>
+    <g class="part w1 wheelSpin" style="--x:-850px;--y:390px">
+      <circle cx="350" cy="360" r="96" stroke="#003e42" stroke-width="18" fill="none"/>
+      <circle cx="350" cy="360" r="90" stroke="#00ffee" stroke-width="7" fill="none"/>
+      <circle cx="350" cy="360" r="64" stroke="rgba(0,255,238,.25)" stroke-width="2" fill="none"/>
+      <circle cx="350" cy="360" r="10" fill="#00ffee"/>
+      <g stroke="rgba(180,255,245,.58)" stroke-width="1.5">
+        <line x1="350" y1="360" x2="350" y2="270"/>
+        <line x1="350" y1="360" x2="350" y2="450"/>
+        <line x1="350" y1="360" x2="260" y2="360"/>
+        <line x1="350" y1="360" x2="440" y2="360"/>
+        <line x1="350" y1="360" x2="286" y2="296"/>
+        <line x1="350" y1="360" x2="414" y2="424"/>
+        <line x1="350" y1="360" x2="414" y2="296"/>
+        <line x1="350" y1="360" x2="286" y2="424"/>
+      </g>
+    </g>
 
-<line class='part pedal' style='--x:0;--y:500px' x1='580' y1='360' x2='620' y2='390' stroke='#00ffff' stroke-width='8'/>
-<line class='part fork' style='--x:800px;--y:-400px' x1='720' y1='360' x2='720' y2='270' stroke='#00ff88' stroke-width='8'/>
+    <g class="part w2 wheelSpin" style="--x:850px;--y:390px">
+      <circle cx="720" cy="360" r="96" stroke="#003e42" stroke-width="18" fill="none"/>
+      <circle cx="720" cy="360" r="90" stroke="#00ffee" stroke-width="7" fill="none"/>
+      <circle cx="720" cy="360" r="64" stroke="rgba(0,255,238,.25)" stroke-width="2" fill="none"/>
+      <circle cx="720" cy="360" r="10" fill="#00ffee"/>
+      <g stroke="rgba(180,255,245,.58)" stroke-width="1.5">
+        <line x1="720" y1="360" x2="720" y2="270"/>
+        <line x1="720" y1="360" x2="720" y2="450"/>
+        <line x1="720" y1="360" x2="630" y2="360"/>
+        <line x1="720" y1="360" x2="810" y2="360"/>
+        <line x1="720" y1="360" x2="656" y2="296"/>
+        <line x1="720" y1="360" x2="784" y2="424"/>
+        <line x1="720" y1="360" x2="784" y2="296"/>
+        <line x1="720" y1="360" x2="656" y2="424"/>
+      </g>
+    </g>
 
-</svg>
+    <g class="part frame framePulse" style="--x:-620px;--y:-420px" stroke="url(#bikeGlow)" stroke-width="10" fill="none" filter="url(#softGlow)">
+      <line class="glowLine" x1="350" y1="360" x2="505" y2="222"/>
+      <line class="glowLine" x1="505" y1="222" x2="720" y2="360"/>
+      <line class="glowLine" x1="350" y1="360" x2="585" y2="360"/>
+      <line class="glowLine" x1="505" y1="222" x2="585" y2="360"/>
+      <line class="glowLine" x1="585" y1="360" x2="720" y2="360"/>
+      <line class="glowLine" x1="505" y1="222" x2="545" y2="188"/>
+    </g>
+
+    <g class="part motor" style="--x:0;--y:520px">
+      <rect x="500" y="300" width="112" height="70" rx="8" fill="rgba(0,20,20,.78)" stroke="#00ffee" stroke-width="4"/>
+      <circle cx="556" cy="335" r="22" fill="none" stroke="#00ff88" stroke-width="4"/>
+      <path d="M536 335h40" stroke="#00ffee" stroke-width="4" stroke-linecap="round"/>
+      <text x="518" y="390" fill="#00ff88" font-size="16" font-weight="700">E-CORE</text>
+    </g>
+
+    <g class="part seat" style="--x:-390px;--y:-330px">
+      <line class="glowLine" x1="505" y1="222" x2="488" y2="176" stroke="#00ffff" stroke-width="7"/>
+      <path d="M452 174 C474 154 529 154 554 174 C535 187 477 189 452 174Z" fill="#061b1d" stroke="#00ffee" stroke-width="5"/>
+    </g>
+
+    <g class="part fork" style="--x:760px;--y:-430px" stroke="#00ff88" stroke-width="8" fill="none">
+      <line class="glowLine" x1="720" y1="360" x2="768" y2="230"/>
+      <line class="glowLine" x1="720" y1="360" x2="742" y2="230"/>
+    </g>
+
+    <g class="part handle" style="--x:710px;--y:-510px" stroke="#00ffff" stroke-width="8" fill="none">
+      <line class="glowLine" x1="755" y1="230" x2="800" y2="174"/>
+      <path class="glowLine" d="M772 176 H840 Q858 176 858 158" />
+      <line class="glowLine" x1="828" y1="176" x2="862" y2="176"/>
+    </g>
+
+    <g class="part pedal" style="--x:0;--y:510px" stroke="#00ffee" stroke-width="7" fill="none">
+      <circle cx="585" cy="360" r="22"/>
+      <line class="glowLine" x1="585" y1="360" x2="632" y2="390"/>
+      <line class="glowLine" x1="620" y1="390" x2="652" y2="390"/>
+    </g>
+
+    <g class="part chain" style="--x:-500px;--y:300px" fill="none">
+      <path d="M350 360 C420 390 505 392 585 360" stroke="rgba(0,255,238,.45)" stroke-width="10" stroke-linecap="round"/>
+      <path d="M350 360 C420 390 505 392 585 360" stroke="#00ffee" stroke-width="3" stroke-dasharray="8 8" stroke-linecap="round"/>
+    </g>
+
+    <g class="part lights" style="--x:500px;--y:0">
+      <circle cx="830" cy="176" r="12" fill="#eafff7"/>
+      <circle cx="830" cy="176" r="34" fill="rgba(85,204,255,.18)"/>
+      <path d="M842 176 L985 130 L985 222 Z" fill="rgba(85,204,255,.12)"/>
+      <circle cx="270" cy="355" r="9" fill="#ff3366"/>
+      <circle cx="270" cy="355" r="28" fill="rgba(255,51,102,.18)"/>
+    </g>
+
+    <circle class="snap s1" cx="505" cy="222" r="28" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <circle class="snap s2" cx="556" cy="335" r="38" fill="none" stroke="#00ffee" stroke-width="3"/>
+    <circle class="snap s3" cx="742" cy="230" r="32" fill="none" stroke="#00ff88" stroke-width="3"/>
+    <circle class="snap s4" cx="830" cy="176" r="34" fill="none" stroke="#55ccff" stroke-width="3"/>
+  </svg>
+</main>
+
+<div class="logo">ECOROLLER</div>
+
+<div class="riderWrap">
+  <svg class="rider" viewBox="0 0 310 160">
+    <g stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="82" cy="30" r="13" fill="#00ff88"/>
+      <line x1="82" y1="44" x2="112" y2="82" stroke="#00ff88" stroke-width="5"/>
+      <line x1="112" y1="82" x2="145" y2="92" stroke="#00ff88" stroke-width="5"/>
+      <line x1="96" y1="63" x2="144" y2="48" stroke="#00ff88" stroke-width="5"/>
+      <line x1="112" y1="82" x2="94" y2="126" stroke="#00ff88" stroke-width="5"/>
+      <line x1="112" y1="82" x2="150" y2="126" stroke="#00ff88" stroke-width="5"/>
+
+      <g class="wheelSpin">
+        <circle cx="122" cy="122" r="30" stroke="#00ffee" stroke-width="4" fill="none"/>
+        <circle cx="122" cy="122" r="5" fill="#00ffee"/>
+      </g>
+
+      <g class="wheelSpin">
+        <circle cx="232" cy="122" r="30" stroke="#00ffee" stroke-width="4" fill="none"/>
+        <circle cx="232" cy="122" r="5" fill="#00ffee"/>
+      </g>
+
+      <line x1="122" y1="122" x2="172" y2="78" stroke="#00ff88" stroke-width="5"/>
+      <line x1="172" y1="78" x2="232" y2="122" stroke="#00ff88" stroke-width="5"/>
+      <line x1="122" y1="122" x2="186" y2="122" stroke="#00ff88" stroke-width="5"/>
+      <line x1="172" y1="78" x2="194" y2="122" stroke="#00ff88" stroke-width="5"/>
+      <line x1="208" y1="82" x2="232" y2="122" stroke="#00ff88" stroke-width="5"/>
+      <line x1="194" y1="122" x2="224" y2="146" stroke="#00ffee" stroke-width="4"/>
+      <line x1="198" y1="80" x2="238" y2="58" stroke="#00ffee" stroke-width="4"/>
+    </g>
+  </svg>
 </div>
 
-<div class='logo'>ECOROLLER</div>
+<div class="dust">ENJOY THE RIDE</div>
 
 <script>
-const c=document.getElementById('matrix');
-const x=c.getContext('2d');
-function r(){c.width=innerWidth;c.height=innerHeight}
-r();
-onresize=r;
-const letters='01ABCDEFGHIJKLMNOPQRSTUVWXYZ<>[]{}#$%';
-const size=16;
-const cols=Math.floor(innerWidth/size);
-const arr=[];
-for(let i=0;i<cols;i++)arr[i]=1;
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
+const statusText = document.getElementById("status");
 
-function draw(){
-x.fillStyle='rgba(0,0,0,.06)';
-x.fillRect(0,0,c.width,c.height);
-x.fillStyle='#00ff66';
-x.font=size+'px monospace';
-for(let i=0;i<arr.length;i++){
-let t=letters[Math.floor(Math.random()*letters.length)]
-x.fillText(t,i*size,arr[i]*size)
-if(arr[i]*size>c.height&&Math.random()>.985)arr[i]=0;
-arr[i]++;
+const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ<>[]{}#$%ECOROLLER";
+const size = 16;
+let columns = 0;
+let drops = [];
+
+function resizeMatrix() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  columns = Math.ceil(canvas.width / size);
+  drops = Array.from({ length: columns }, () => Math.random() * canvas.height / size);
 }
-requestAnimationFrame(draw)
+
+function drawMatrix() {
+  ctx.fillStyle = "rgba(3, 6, 13, 0.075)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.font = `${size}px Consolas, monospace`;
+
+  for (let i = 0; i < drops.length; i++) {
+    const char = letters[Math.floor(Math.random() * letters.length)];
+    const x = i * size;
+    const y = drops[i] * size;
+
+    ctx.fillStyle = "#dffff4";
+    ctx.fillText(char, x, y);
+
+    ctx.fillStyle = "#00ff66";
+    ctx.fillText(char, x, y - size);
+
+    ctx.fillStyle = "rgba(0, 255, 136, .45)";
+    ctx.fillText(char, x, y - size * 2);
+
+    if (y > canvas.height && Math.random() > 0.982) {
+      drops[i] = 0;
+    }
+
+    drops[i]++;
+  }
+
+  requestAnimationFrame(drawMatrix);
 }
-draw();
+
+const phases = [
+  [700, "WHEEL MATRIX LOCKED"],
+  [1600, "FRAME GEOMETRY ALIGNED"],
+  [2700, "E-CORE INSTALLED"],
+  [3700, "STEERING SYSTEM SYNCED"],
+  [5050, "DRIVETRAIN CALIBRATED"],
+  [6200, "LIGHT SYSTEM ONLINE"],
+  [7600, "READY TO RIDE"]
+];
+
+for (const [time, text] of phases) {
+  setTimeout(() => {
+    statusText.textContent = text;
+  }, time);
+}
+
+resizeMatrix();
+drawMatrix();
+
+window.addEventListener("resize", resizeMatrix);
 </script>
-<div class='riderWrap'>
-<svg class='rider' viewBox='0 0 260 140'>
-<circle cx='70' cy='30' r='12' fill='#00ff88'/>
-<line x1='70' y1='42' x2='95' y2='75' stroke='#00ff88' stroke-width='4'/>
-<line x1='95' y1='75' x2='120' y2='85' stroke='#00ff88' stroke-width='4'/>
-<line x1='85' y1='60' x2='120' y2='45' stroke='#00ff88' stroke-width='4'/>
-<line x1='95' y1='75' x2='80' y2='110' stroke='#00ff88' stroke-width='4'/>
-<line x1='95' y1='75' x2='125' y2='110' stroke='#00ff88' stroke-width='4'/>
-
-<circle cx='110' cy='105' r='25' stroke='#00ffee' stroke-width='3' fill='none'/>
-<circle cx='200' cy='105' r='25' stroke='#00ffee' stroke-width='3' fill='none'/>
-<line x1='110' y1='105' x2='150' y2='70' stroke='#00ff88' stroke-width='4'/>
-<line x1='150' y1='70' x2='200' y2='105' stroke='#00ff88' stroke-width='4'/>
-<line x1='110' y1='105' x2='165' y2='105' stroke='#00ff88' stroke-width='4'/>
-</svg>
-</div>
-<div class='dust'>ENJOY THE RIDE</div>
 </body>
 </html>
