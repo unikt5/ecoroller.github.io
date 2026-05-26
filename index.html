@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ECOROLLER Cyber Assembly</title>
+<title>ECOROLLER Walking Bike Assembly</title>
 
 <style>
 :root {
   --bg: #03060d;
   --green: #00ff88;
   --mint: #00ffee;
-  --blue: #55ccff;
-  --danger: #ff3366;
-  --text: #bfffee;
+  --blue: #58cfff;
+  --red: #ff3b6b;
+  --white: #eafff8;
 }
 
 * {
@@ -25,11 +25,11 @@ body {
   min-height: 100vh;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 55%, rgba(0, 255, 160, .14), transparent 34%),
-    radial-gradient(circle at 50% 85%, rgba(0, 238, 255, .08), transparent 28%),
+    radial-gradient(circle at 50% 50%, rgba(0,255,180,.13), transparent 35%),
+    radial-gradient(circle at 50% 90%, rgba(88,207,255,.10), transparent 28%),
     var(--bg);
-  font-family: Consolas, Monaco, monospace;
-  color: var(--text);
+  font-family: Consolas, monospace;
+  color: var(--green);
 }
 
 canvas {
@@ -38,303 +38,297 @@ canvas {
   z-index: 0;
 }
 
-.scene {
-  position: relative;
-  z-index: 2;
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  perspective: 900px;
+.grid {
+  position: fixed;
+  inset: auto 0 0;
+  height: 42vh;
+  z-index: 1;
+  background:
+    linear-gradient(rgba(0,255,136,.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,136,.16) 1px, transparent 1px);
+  background-size: 54px 34px;
+  transform: perspective(430px) rotateX(64deg);
+  transform-origin: bottom;
+  opacity: .35;
 }
 
-.assembly {
-  width: min(1120px, 96vw);
-  height: auto;
-  filter: drop-shadow(0 0 18px rgba(0, 255, 200, .45));
-  animation: cameraSettle 1.8s ease-out 6.9s both;
+.scan {
+  position: fixed;
+  left: 0;
+  top: -10%;
+  z-index: 4;
+  width: 100%;
+  height: 2px;
+  background: var(--green);
+  box-shadow: 0 0 26px var(--green), 0 0 80px var(--mint);
+  opacity: .45;
+  animation: scan 4s linear infinite;
 }
 
-@keyframes cameraSettle {
-  0%, 100% { transform: scale(1) rotateX(0deg); }
-  35% { transform: scale(1.035) rotateX(2deg); }
+@keyframes scan {
+  to { top: 110%; }
 }
 
 .hud {
   position: fixed;
   top: 22px;
   left: 26px;
-  z-index: 5;
-  width: min(360px, calc(100vw - 52px));
+  z-index: 8;
+  width: min(390px, calc(100vw - 52px));
   padding-left: 16px;
   border-left: 2px solid var(--green);
-  color: var(--green);
-  text-shadow: 0 0 10px var(--green);
   font-size: 14px;
   line-height: 1.8;
-  letter-spacing: .04em;
+  text-shadow: 0 0 10px var(--green);
 }
 
 .hud strong {
-  color: #eafff7;
+  color: var(--white);
 }
 
-.progress {
+.bar {
   width: 100%;
   height: 7px;
   margin-top: 10px;
-  border: 1px solid rgba(0, 255, 136, .5);
-  background: rgba(0, 0, 0, .55);
-  box-shadow: 0 0 18px rgba(0, 255, 136, .2) inset;
+  border: 1px solid rgba(0,255,136,.5);
+  background: rgba(0,0,0,.5);
 }
 
-.progress span {
+.bar span {
   display: block;
   width: 0%;
   height: 100%;
   background: linear-gradient(90deg, var(--green), var(--mint), var(--blue));
   box-shadow: 0 0 18px var(--mint);
-  animation: load 7s steps(7) forwards;
+  animation: load 8s forwards;
 }
 
 @keyframes load {
   to { width: 100%; }
 }
 
-.status {
-  animation: statusText 8.2s steps(1) forwards;
+.scene {
+  position: relative;
+  z-index: 3;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
 }
 
-.status::after {
-  content: "INITIALIZING";
+svg {
+  width: min(1160px, 97vw);
+  height: auto;
+  overflow: visible;
 }
 
-@keyframes statusText {
-  0% { content: "INITIALIZING"; }
-}
-
-.scan {
-  position: fixed;
-  z-index: 4;
-  left: 0;
-  top: -8%;
-  width: 100%;
-  height: 2px;
-  opacity: .45;
-  background: var(--green);
-  box-shadow: 0 0 28px var(--green), 0 0 80px var(--mint);
-  animation: scan 3.7s linear infinite;
-}
-
-@keyframes scan {
-  to { top: 108%; }
-}
-
-.grid {
-  position: fixed;
-  inset: auto 0 0;
-  z-index: 1;
-  height: 42vh;
-  background:
-    linear-gradient(rgba(0, 255, 136, .16) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 136, .16) 1px, transparent 1px);
-  background-size: 52px 34px;
-  transform: perspective(420px) rotateX(64deg);
-  transform-origin: bottom;
-  opacity: .34;
-  filter: drop-shadow(0 0 20px rgba(0,255,136,.35));
+.assembly {
+  filter: drop-shadow(0 0 18px rgba(0,255,210,.48));
 }
 
 .part {
   opacity: 0;
   transform-box: fill-box;
   transform-origin: center;
-  animation: assemble 1.55s cubic-bezier(.12, .9, .18, 1.12) forwards;
+  animation: assemble 1.8s cubic-bezier(.12,.95,.2,1.08) forwards;
 }
 
 @keyframes assemble {
   0% {
     opacity: 0;
-    transform: translate(var(--x), var(--y)) rotate(640deg) scale(.08);
+    transform: translate(var(--x), var(--y)) rotate(520deg) scale(.08);
   }
-  70% {
+  72% {
     opacity: 1;
-    transform: translate(0, 0) rotate(-8deg) scale(1.08);
+    transform: translate(0,0) rotate(-5deg) scale(1.05);
   }
   100% {
     opacity: 1;
-    transform: translate(0, 0) rotate(0deg) scale(1);
+    transform: translate(0,0) rotate(0) scale(1);
   }
 }
 
-.w1 { animation-delay: .45s; }
-.w2 { animation-delay: 1.05s; }
-.frame { animation-delay: 1.85s; }
-.motor { animation-delay: 2.55s; }
-.seat { animation-delay: 3.1s; }
-.fork { animation-delay: 3.65s; }
-.handle { animation-delay: 4.25s; }
-.pedal { animation-delay: 4.9s; }
-.chain { animation-delay: 5.45s; }
-.lights { animation-delay: 6.05s; }
+.wheelBack { animation-delay: .45s; }
+.wheelFront { animation-delay: 1.05s; }
+.deck { animation-delay: 1.85s; }
+.motor { animation-delay: 2.65s; }
+.rearFrame { animation-delay: 3.15s; }
+.frontFrame { animation-delay: 3.75s; }
+.handlebar { animation-delay: 4.35s; }
+.battery { animation-delay: 4.95s; }
+.lights { animation-delay: 5.55s; }
+.riderPart { animation-delay: 6.4s; }
 
-.snap {
-  opacity: 0;
-  transform-origin: center;
-  animation: snapFlash .55s ease-out forwards;
-}
-
-.s1 { animation-delay: 1.95s; }
-.s2 { animation-delay: 2.65s; }
-.s3 { animation-delay: 3.75s; }
-.s4 { animation-delay: 6.1s; }
-
-@keyframes snapFlash {
-  0% { opacity: 0; transform: scale(.3); }
-  35% { opacity: 1; }
-  100% { opacity: 0; transform: scale(2.4); }
-}
-
-.ring {
-  stroke: var(--mint);
-  stroke-width: 2;
-  stroke-dasharray: 12 18;
-  fill: none;
-  opacity: .65;
-  transform-origin: 550px 310px;
-  animation: ringSpin 9s linear infinite;
-}
-
-.ring.secondary {
-  stroke: var(--blue);
-  stroke-dasharray: 4 26;
-  animation-duration: 14s;
-  animation-direction: reverse;
-  opacity: .45;
-}
-
-@keyframes ringSpin {
-  to { transform: rotate(360deg); }
+.line {
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .wheelSpin {
   transform-box: fill-box;
   transform-origin: center;
-  animation: wheelRun .85s linear infinite;
-  animation-delay: 7.3s;
+  animation: wheelSpin 2.8s linear infinite;
+  animation-delay: 8.1s;
 }
 
-@keyframes wheelRun {
+@keyframes wheelSpin {
   to { transform: rotate(360deg); }
 }
 
-.glowLine {
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 0 7px currentColor);
+.beltMove {
+  stroke-dasharray: 18 14;
+  animation: beltMove 1.8s linear infinite;
+  animation-delay: 8.1s;
 }
 
-.framePulse {
-  animation: framePulse 1.7s ease-in-out infinite;
-  animation-delay: 7.2s;
+@keyframes beltMove {
+  to { stroke-dashoffset: -64; }
 }
 
-@keyframes framePulse {
+.walker {
+  opacity: 0;
+  animation: showWalker .8s forwards 7.2s, riderFloat 2s ease-in-out infinite 8s;
+  transform-origin: 565px 248px;
+}
+
+@keyframes showWalker {
+  to { opacity: 1; }
+}
+
+@keyframes riderFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.legA {
+  transform-origin: 558px 285px;
+  animation: legA 1.45s ease-in-out infinite;
+  animation-delay: 8s;
+}
+
+.legB {
+  transform-origin: 558px 285px;
+  animation: legB 1.45s ease-in-out infinite;
+  animation-delay: 8s;
+}
+
+@keyframes legA {
+  0%, 100% { transform: rotate(14deg); }
+  50% { transform: rotate(-18deg); }
+}
+
+@keyframes legB {
+  0%, 100% { transform: rotate(-18deg); }
+  50% { transform: rotate(14deg); }
+}
+
+.armA {
+  transform-origin: 552px 226px;
+  animation: armA 1.45s ease-in-out infinite;
+  animation-delay: 8s;
+}
+
+.armB {
+  transform-origin: 552px 226px;
+  animation: armB 1.45s ease-in-out infinite;
+  animation-delay: 8s;
+}
+
+@keyframes armA {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(8deg); }
+}
+
+@keyframes armB {
+  0%, 100% { transform: rotate(7deg); }
+  50% { transform: rotate(-5deg); }
+}
+
+.vehicleRun {
+  animation: slowCruise 7s linear infinite;
+  animation-delay: 8.2s;
+}
+
+@keyframes slowCruise {
+  0% { transform: translateX(-18px); }
+  50% { transform: translateX(18px); }
+  100% { transform: translateX(-18px); }
+}
+
+.pulse {
+  animation: pulse 1.7s ease-in-out infinite;
+  animation-delay: 8.1s;
+}
+
+@keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: .62; }
+  50% { opacity: .58; }
+}
+
+.snap {
+  opacity: 0;
+  transform-origin: center;
+  animation: snap .55s ease-out forwards;
+}
+
+.s1 { animation-delay: 1.9s; }
+.s2 { animation-delay: 2.75s; }
+.s3 { animation-delay: 3.85s; }
+.s4 { animation-delay: 5.65s; }
+
+@keyframes snap {
+  0% { opacity: 0; transform: scale(.3); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: scale(2.5); }
 }
 
 .logo {
   position: fixed;
-  z-index: 5;
   left: 50%;
-  bottom: 58px;
+  bottom: 52px;
+  z-index: 8;
   transform: translateX(-50%);
-  font-size: clamp(34px, 7vw, 72px);
+  font-size: clamp(34px, 7vw, 70px);
   font-weight: 900;
-  letter-spacing: clamp(5px, 1.4vw, 14px);
+  letter-spacing: clamp(5px, 1.3vw, 13px);
   color: var(--green);
   opacity: 0;
   text-shadow:
-    0 0 10px var(--green),
-    0 0 35px var(--green),
-    0 0 90px var(--mint);
-  animation: showLogo 1.8s cubic-bezier(.1, .9, .2, 1.2) forwards;
-  animation-delay: 7s;
+    0 0 12px var(--green),
+    0 0 34px var(--green),
+    0 0 88px var(--mint);
+  animation: logo 1.8s cubic-bezier(.1,.9,.2,1.15) forwards;
+  animation-delay: 7.7s;
 }
 
-@keyframes showLogo {
-  0% { opacity: 0; transform: translateX(-50%) scale(.42); }
+@keyframes logo {
+  0% { opacity: 0; transform: translateX(-50%) scale(.4); }
   55% { opacity: 1; transform: translateX(-50%) scale(1.15); }
   100% { opacity: 1; transform: translateX(-50%) scale(1); }
 }
 
-.riderWrap {
-  position: fixed;
-  z-index: 6;
-  left: -420px;
-  bottom: 165px;
-  width: 310px;
-  opacity: 0;
-  filter: drop-shadow(0 0 16px rgba(0, 255, 200, .8));
-  animation: ride 5.2s linear forwards;
-  animation-delay: 9s;
-}
-
-@keyframes ride {
-  0% { left: -420px; opacity: 1; }
-  100% { left: 125vw; opacity: 1; }
-}
-
-.dust {
-  position: fixed;
-  z-index: 5;
-  bottom: 190px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: rgba(0, 255, 170, .28);
-  font-size: clamp(28px, 5vw, 58px);
-  font-weight: 900;
-  letter-spacing: .2em;
-  text-shadow: 0 0 28px var(--green);
-  filter: blur(3px);
-  opacity: 0;
-  white-space: nowrap;
-  animation: dustFade 4.6s ease-out forwards;
-  animation-delay: 10.1s;
-}
-
-@keyframes dustFade {
-  0% { opacity: 0; transform: translateX(-55%) scale(.55); }
-  32% { opacity: 1; }
-  100% { opacity: 0; transform: translateX(-43%) scale(1.35); }
-}
-
 .ready {
   position: fixed;
-  z-index: 5;
   right: 28px;
-  top: 26px;
+  top: 24px;
+  z-index: 8;
   padding: 10px 14px;
-  border: 1px solid rgba(0, 255, 238, .55);
+  border: 1px solid rgba(0,255,238,.55);
   color: var(--mint);
-  background: rgba(0, 15, 18, .35);
-  box-shadow: 0 0 24px rgba(0,255,238,.16) inset;
+  background: rgba(0,18,22,.42);
   text-shadow: 0 0 10px var(--mint);
   opacity: 0;
-  animation: readyShow .8s ease forwards;
-  animation-delay: 7.65s;
+  animation: ready .7s forwards 8s;
 }
 
-@keyframes readyShow {
+@keyframes ready {
   to { opacity: 1; }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 760px) {
   .hud {
     font-size: 11px;
     top: 14px;
     left: 14px;
-    width: calc(100vw - 28px);
   }
 
   .ready {
@@ -342,16 +336,7 @@ canvas {
   }
 
   .logo {
-    bottom: 34px;
-  }
-
-  .riderWrap {
-    bottom: 112px;
-    width: 230px;
-  }
-
-  .dust {
-    bottom: 132px;
+    bottom: 28px;
   }
 }
 
@@ -359,7 +344,6 @@ canvas {
   *, *::before, *::after {
     animation-duration: .01ms !important;
     animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
   }
 }
 </style>
@@ -371,188 +355,165 @@ canvas {
 <div class="scan"></div>
 
 <div class="hud">
-  <strong>ECOROLLER OS</strong><br>
+  <strong>ECOROLLER WALK-DRIVE OS</strong><br>
   AI VISUAL ENGINE : ONLINE<br>
-  MAG-RAIL ASSEMBLY : ACTIVE<br>
-  ENERGY CORE : CHARGING<br>
+  TREADMILL BIKE MODE : ACTIVE<br>
+  PEDAL SYSTEM : NOT INSTALLED<br>
   STATUS : <span id="status">INITIALIZING</span>
-  <div class="progress"><span></span></div>
+  <div class="bar"><span></span></div>
 </div>
 
-<div class="ready">READY TO RIDE</div>
+<div class="ready">SLOW MOTION WALK-DRIVE READY</div>
 
 <main class="scene">
-  <svg class="assembly" viewBox="0 0 1100 650" aria-label="ECOROLLER cyber assembly animation">
-    <defs>
-      <linearGradient id="bikeGlow" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#00ff88"/>
-        <stop offset="55%" stop-color="#00ffee"/>
-        <stop offset="100%" stop-color="#55ccff"/>
-      </linearGradient>
+<svg class="assembly" viewBox="0 0 1100 650" aria-label="ECOROLLER walking bike assembly">
+  <defs>
+    <linearGradient id="neon" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00ff88"/>
+      <stop offset="55%" stop-color="#00ffee"/>
+      <stop offset="100%" stop-color="#58cfff"/>
+    </linearGradient>
 
-      <filter id="softGlow">
-        <feGaussianBlur stdDeviation="4" result="blur"/>
-        <feMerge>
-          <feMergeNode in="blur"/>
-          <feMergeNode in="SourceGraphic"/>
-        </feMerge>
-      </filter>
-    </defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
 
-    <ellipse cx="550" cy="472" rx="350" ry="38" fill="rgba(0,255,180,.08)" />
-    <ellipse cx="550" cy="472" rx="285" ry="18" fill="none" stroke="rgba(0,255,238,.22)" stroke-width="2" />
+  <ellipse cx="550" cy="488" rx="380" ry="42" fill="rgba(0,255,180,.08)" />
+  <ellipse cx="550" cy="488" rx="310" ry="20" fill="none" stroke="rgba(0,255,238,.24)" stroke-width="2" />
 
-    <circle class="ring" cx="550" cy="310" r="230"/>
-    <circle class="ring secondary" cx="550" cy="310" r="270"/>
-
-    <g class="part w1 wheelSpin" style="--x:-850px;--y:390px">
-      <circle cx="350" cy="360" r="96" stroke="#003e42" stroke-width="18" fill="none"/>
-      <circle cx="350" cy="360" r="90" stroke="#00ffee" stroke-width="7" fill="none"/>
-      <circle cx="350" cy="360" r="64" stroke="rgba(0,255,238,.25)" stroke-width="2" fill="none"/>
-      <circle cx="350" cy="360" r="10" fill="#00ffee"/>
-      <g stroke="rgba(180,255,245,.58)" stroke-width="1.5">
-        <line x1="350" y1="360" x2="350" y2="270"/>
-        <line x1="350" y1="360" x2="350" y2="450"/>
-        <line x1="350" y1="360" x2="260" y2="360"/>
-        <line x1="350" y1="360" x2="440" y2="360"/>
-        <line x1="350" y1="360" x2="286" y2="296"/>
-        <line x1="350" y1="360" x2="414" y2="424"/>
-        <line x1="350" y1="360" x2="414" y2="296"/>
-        <line x1="350" y1="360" x2="286" y2="424"/>
+  <g class="vehicleRun">
+    <g class="part wheelBack wheelSpin" style="--x:-850px;--y:350px">
+      <circle cx="330" cy="405" r="88" stroke="#002e34" stroke-width="18" fill="none"/>
+      <circle cx="330" cy="405" r="82" stroke="#00ffee" stroke-width="7" fill="none"/>
+      <circle cx="330" cy="405" r="12" fill="#00ffee"/>
+      <g stroke="rgba(220,255,250,.55)" stroke-width="1.5">
+        <line x1="330" y1="405" x2="330" y2="323"/>
+        <line x1="330" y1="405" x2="330" y2="487"/>
+        <line x1="330" y1="405" x2="248" y2="405"/>
+        <line x1="330" y1="405" x2="412" y2="405"/>
+        <line x1="330" y1="405" x2="272" y2="347"/>
+        <line x1="330" y1="405" x2="388" y2="463"/>
+        <line x1="330" y1="405" x2="388" y2="347"/>
+        <line x1="330" y1="405" x2="272" y2="463"/>
       </g>
     </g>
 
-    <g class="part w2 wheelSpin" style="--x:850px;--y:390px">
-      <circle cx="720" cy="360" r="96" stroke="#003e42" stroke-width="18" fill="none"/>
-      <circle cx="720" cy="360" r="90" stroke="#00ffee" stroke-width="7" fill="none"/>
-      <circle cx="720" cy="360" r="64" stroke="rgba(0,255,238,.25)" stroke-width="2" fill="none"/>
-      <circle cx="720" cy="360" r="10" fill="#00ffee"/>
-      <g stroke="rgba(180,255,245,.58)" stroke-width="1.5">
-        <line x1="720" y1="360" x2="720" y2="270"/>
-        <line x1="720" y1="360" x2="720" y2="450"/>
-        <line x1="720" y1="360" x2="630" y2="360"/>
-        <line x1="720" y1="360" x2="810" y2="360"/>
-        <line x1="720" y1="360" x2="656" y2="296"/>
-        <line x1="720" y1="360" x2="784" y2="424"/>
-        <line x1="720" y1="360" x2="784" y2="296"/>
-        <line x1="720" y1="360" x2="656" y2="424"/>
+    <g class="part wheelFront wheelSpin" style="--x:850px;--y:350px">
+      <circle cx="790" cy="405" r="88" stroke="#002e34" stroke-width="18" fill="none"/>
+      <circle cx="790" cy="405" r="82" stroke="#00ffee" stroke-width="7" fill="none"/>
+      <circle cx="790" cy="405" r="12" fill="#00ffee"/>
+      <g stroke="rgba(220,255,250,.55)" stroke-width="1.5">
+        <line x1="790" y1="405" x2="790" y2="323"/>
+        <line x1="790" y1="405" x2="790" y2="487"/>
+        <line x1="790" y1="405" x2="708" y2="405"/>
+        <line x1="790" y1="405" x2="872" y2="405"/>
+        <line x1="790" y1="405" x2="732" y2="347"/>
+        <line x1="790" y1="405" x2="848" y2="463"/>
+        <line x1="790" y1="405" x2="848" y2="347"/>
+        <line x1="790" y1="405" x2="732" y2="463"/>
       </g>
     </g>
 
-    <g class="part frame framePulse" style="--x:-620px;--y:-420px" stroke="url(#bikeGlow)" stroke-width="10" fill="none" filter="url(#softGlow)">
-      <line class="glowLine" x1="350" y1="360" x2="505" y2="222"/>
-      <line class="glowLine" x1="505" y1="222" x2="720" y2="360"/>
-      <line class="glowLine" x1="350" y1="360" x2="585" y2="360"/>
-      <line class="glowLine" x1="505" y1="222" x2="585" y2="360"/>
-      <line class="glowLine" x1="585" y1="360" x2="720" y2="360"/>
-      <line class="glowLine" x1="505" y1="222" x2="545" y2="188"/>
+    <g class="part deck" style="--x:0;--y:540px">
+      <path d="M335 372 C430 346 672 346 777 372 L742 425 C630 448 468 448 365 425 Z"
+            fill="rgba(0,14,16,.88)" stroke="#00ffee" stroke-width="5" filter="url(#glow)"/>
+      <path class="beltMove" d="M382 388 C480 369 630 369 728 388"
+            fill="none" stroke="#00ff88" stroke-width="11" stroke-linecap="round"/>
+      <path class="beltMove" d="M388 411 C485 428 626 428 721 411"
+            fill="none" stroke="#58cfff" stroke-width="5" stroke-linecap="round"/>
+      <text x="486" y="408" fill="#eafff8" font-size="18" font-weight="700">WALK BELT</text>
     </g>
 
-    <g class="part motor" style="--x:0;--y:520px">
-      <rect x="500" y="300" width="112" height="70" rx="8" fill="rgba(0,20,20,.78)" stroke="#00ffee" stroke-width="4"/>
-      <circle cx="556" cy="335" r="22" fill="none" stroke="#00ff88" stroke-width="4"/>
-      <path d="M536 335h40" stroke="#00ffee" stroke-width="4" stroke-linecap="round"/>
-      <text x="518" y="390" fill="#00ff88" font-size="16" font-weight="700">E-CORE</text>
+    <g class="part motor" style="--x:-120px;--y:500px">
+      <rect x="420" y="305" width="185" height="82" rx="12"
+            fill="rgba(0,22,24,.92)" stroke="#00ffee" stroke-width="5" filter="url(#glow)"/>
+      <circle cx="458" cy="346" r="22" fill="none" stroke="#00ff88" stroke-width="5"/>
+      <path d="M444 346 H472" stroke="#00ffee" stroke-width="5" stroke-linecap="round"/>
+      <text x="492" y="340" fill="#00ff88" font-size="22" font-weight="900">ECOROLLER</text>
+      <text x="492" y="363" fill="#58cfff" font-size="13">ELECTRIC WALK MOTOR</text>
     </g>
 
-    <g class="part seat" style="--x:-390px;--y:-330px">
-      <line class="glowLine" x1="505" y1="222" x2="488" y2="176" stroke="#00ffff" stroke-width="7"/>
-      <path d="M452 174 C474 154 529 154 554 174 C535 187 477 189 452 174Z" fill="#061b1d" stroke="#00ffee" stroke-width="5"/>
+    <g class="part rearFrame pulse" style="--x:-700px;--y:-390px" stroke="url(#neon)" stroke-width="9" fill="none" filter="url(#glow)">
+      <line class="line" x1="330" y1="405" x2="432" y2="315"/>
+      <line class="line" x1="330" y1="405" x2="420" y2="354"/>
+      <line class="line" x1="432" y1="315" x2="555" y2="318"/>
+      <line class="line" x1="420" y1="354" x2="610" y2="354"/>
     </g>
 
-    <g class="part fork" style="--x:760px;--y:-430px" stroke="#00ff88" stroke-width="8" fill="none">
-      <line class="glowLine" x1="720" y1="360" x2="768" y2="230"/>
-      <line class="glowLine" x1="720" y1="360" x2="742" y2="230"/>
+    <g class="part frontFrame pulse" style="--x:720px;--y:-390px" stroke="url(#neon)" stroke-width="9" fill="none" filter="url(#glow)">
+      <line class="line" x1="790" y1="405" x2="733" y2="270"/>
+      <line class="line" x1="790" y1="405" x2="714" y2="352"/>
+      <line class="line" x1="733" y1="270" x2="610" y2="354"/>
+      <line class="line" x1="714" y1="352" x2="555" y2="318"/>
     </g>
 
-    <g class="part handle" style="--x:710px;--y:-510px" stroke="#00ffff" stroke-width="8" fill="none">
-      <line class="glowLine" x1="755" y1="230" x2="800" y2="174"/>
-      <path class="glowLine" d="M772 176 H840 Q858 176 858 158" />
-      <line class="glowLine" x1="828" y1="176" x2="862" y2="176"/>
+    <g class="part handlebar" style="--x:680px;--y:-520px" stroke="#00ffee" stroke-width="8" fill="none" filter="url(#glow)">
+      <line class="line" x1="733" y1="270" x2="720" y2="150"/>
+      <path class="line" d="M684 150 H772 Q795 150 803 127"/>
+      <line class="line" x1="683" y1="150" x2="654" y2="163"/>
+      <line class="line" x1="770" y1="150" x2="810" y2="150"/>
+      <circle cx="720" cy="178" r="12" fill="#001d20" stroke="#00ff88" stroke-width="4"/>
     </g>
 
-    <g class="part pedal" style="--x:0;--y:510px" stroke="#00ffee" stroke-width="7" fill="none">
-      <circle cx="585" cy="360" r="22"/>
-      <line class="glowLine" x1="585" y1="360" x2="632" y2="390"/>
-      <line class="glowLine" x1="620" y1="390" x2="652" y2="390"/>
+    <g class="part battery" style="--x:0;--y:-450px">
+      <rect x="615" y="305" width="74" height="45" rx="8"
+            fill="rgba(0,255,136,.12)" stroke="#00ff88" stroke-width="4"/>
+      <text x="630" y="334" fill="#00ff88" font-size="14" font-weight="700">48V</text>
     </g>
 
-    <g class="part chain" style="--x:-500px;--y:300px" fill="none">
-      <path d="M350 360 C420 390 505 392 585 360" stroke="rgba(0,255,238,.45)" stroke-width="10" stroke-linecap="round"/>
-      <path d="M350 360 C420 390 505 392 585 360" stroke="#00ffee" stroke-width="3" stroke-dasharray="8 8" stroke-linecap="round"/>
+    <g class="part lights" style="--x:700px;--y:0">
+      <circle cx="810" cy="150" r="11" fill="#eafff8"/>
+      <path d="M822 150 L1010 105 L1010 198 Z" fill="rgba(88,207,255,.12)"/>
+      <circle cx="264" cy="390" r="9" fill="#ff3b6b"/>
+      <circle cx="264" cy="390" r="27" fill="rgba(255,59,107,.16)"/>
     </g>
 
-    <g class="part lights" style="--x:500px;--y:0">
-      <circle cx="830" cy="176" r="12" fill="#eafff7"/>
-      <circle cx="830" cy="176" r="34" fill="rgba(85,204,255,.18)"/>
-      <path d="M842 176 L985 130 L985 222 Z" fill="rgba(85,204,255,.12)"/>
-      <circle cx="270" cy="355" r="9" fill="#ff3366"/>
-      <circle cx="270" cy="355" r="28" fill="rgba(255,51,102,.18)"/>
+    <g class="walker">
+      <circle cx="548" cy="183" r="18" fill="#00ff88" filter="url(#glow)"/>
+      <path d="M548 202 L558 285" stroke="#00ff88" stroke-width="9" stroke-linecap="round"/>
+      <path class="armA" d="M552 226 L624 176" stroke="#00ffee" stroke-width="7" stroke-linecap="round"/>
+      <path class="armB" d="M550 230 L704 156" stroke="#00ffee" stroke-width="6" stroke-linecap="round" opacity=".8"/>
+      <path class="legA" d="M558 285 L512 382" stroke="#00ff88" stroke-width="8" stroke-linecap="round"/>
+      <path class="legA" d="M512 382 L476 402" stroke="#00ffee" stroke-width="7" stroke-linecap="round"/>
+      <path class="legB" d="M558 285 L615 382" stroke="#00ff88" stroke-width="8" stroke-linecap="round"/>
+      <path class="legB" d="M615 382 L660 399" stroke="#00ffee" stroke-width="7" stroke-linecap="round"/>
+      <path d="M526 206 C548 193 575 196 588 215" fill="none" stroke="#eafff8" stroke-width="3" opacity=".75"/>
     </g>
+  </g>
 
-    <circle class="snap s1" cx="505" cy="222" r="28" fill="none" stroke="#ffffff" stroke-width="3"/>
-    <circle class="snap s2" cx="556" cy="335" r="38" fill="none" stroke="#00ffee" stroke-width="3"/>
-    <circle class="snap s3" cx="742" cy="230" r="32" fill="none" stroke="#00ff88" stroke-width="3"/>
-    <circle class="snap s4" cx="830" cy="176" r="34" fill="none" stroke="#55ccff" stroke-width="3"/>
-  </svg>
+  <circle class="snap s1" cx="560" cy="390" r="52" fill="none" stroke="#ffffff" stroke-width="3"/>
+  <circle class="snap s2" cx="512" cy="345" r="56" fill="none" stroke="#00ffee" stroke-width="3"/>
+  <circle class="snap s3" cx="733" cy="270" r="44" fill="none" stroke="#00ff88" stroke-width="3"/>
+  <circle class="snap s4" cx="810" cy="150" r="35" fill="none" stroke="#58cfff" stroke-width="3"/>
+</svg>
 </main>
 
 <div class="logo">ECOROLLER</div>
-
-<div class="riderWrap">
-  <svg class="rider" viewBox="0 0 310 160">
-    <g stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="82" cy="30" r="13" fill="#00ff88"/>
-      <line x1="82" y1="44" x2="112" y2="82" stroke="#00ff88" stroke-width="5"/>
-      <line x1="112" y1="82" x2="145" y2="92" stroke="#00ff88" stroke-width="5"/>
-      <line x1="96" y1="63" x2="144" y2="48" stroke="#00ff88" stroke-width="5"/>
-      <line x1="112" y1="82" x2="94" y2="126" stroke="#00ff88" stroke-width="5"/>
-      <line x1="112" y1="82" x2="150" y2="126" stroke="#00ff88" stroke-width="5"/>
-
-      <g class="wheelSpin">
-        <circle cx="122" cy="122" r="30" stroke="#00ffee" stroke-width="4" fill="none"/>
-        <circle cx="122" cy="122" r="5" fill="#00ffee"/>
-      </g>
-
-      <g class="wheelSpin">
-        <circle cx="232" cy="122" r="30" stroke="#00ffee" stroke-width="4" fill="none"/>
-        <circle cx="232" cy="122" r="5" fill="#00ffee"/>
-      </g>
-
-      <line x1="122" y1="122" x2="172" y2="78" stroke="#00ff88" stroke-width="5"/>
-      <line x1="172" y1="78" x2="232" y2="122" stroke="#00ff88" stroke-width="5"/>
-      <line x1="122" y1="122" x2="186" y2="122" stroke="#00ff88" stroke-width="5"/>
-      <line x1="172" y1="78" x2="194" y2="122" stroke="#00ff88" stroke-width="5"/>
-      <line x1="208" y1="82" x2="232" y2="122" stroke="#00ff88" stroke-width="5"/>
-      <line x1="194" y1="122" x2="224" y2="146" stroke="#00ffee" stroke-width="4"/>
-      <line x1="198" y1="80" x2="238" y2="58" stroke="#00ffee" stroke-width="4"/>
-    </g>
-  </svg>
-</div>
-
-<div class="dust">ENJOY THE RIDE</div>
 
 <script>
 const canvas = document.getElementById("matrix");
 const ctx = canvas.getContext("2d");
 const statusText = document.getElementById("status");
 
-const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ<>[]{}#$%ECOROLLER";
+const letters = "01ECOROLLERWALKDRIVE<>[]{}#$%";
 const size = 16;
-let columns = 0;
 let drops = [];
 
 function resizeMatrix() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  columns = Math.ceil(canvas.width / size);
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+  const columns = Math.ceil(canvas.width / size);
   drops = Array.from({ length: columns }, () => Math.random() * canvas.height / size);
 }
 
 function drawMatrix() {
-  ctx.fillStyle = "rgba(3, 6, 13, 0.075)";
+  ctx.fillStyle = "rgba(3,6,13,.075)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
   ctx.font = `${size}px Consolas, monospace`;
 
   for (let i = 0; i < drops.length; i++) {
@@ -566,13 +527,10 @@ function drawMatrix() {
     ctx.fillStyle = "#00ff66";
     ctx.fillText(char, x, y - size);
 
-    ctx.fillStyle = "rgba(0, 255, 136, .45)";
+    ctx.fillStyle = "rgba(0,255,136,.42)";
     ctx.fillText(char, x, y - size * 2);
 
-    if (y > canvas.height && Math.random() > 0.982) {
-      drops[i] = 0;
-    }
-
+    if (y > canvas.height && Math.random() > .982) drops[i] = 0;
     drops[i]++;
   }
 
@@ -580,13 +538,14 @@ function drawMatrix() {
 }
 
 const phases = [
-  [700, "WHEEL MATRIX LOCKED"],
-  [1600, "FRAME GEOMETRY ALIGNED"],
-  [2700, "E-CORE INSTALLED"],
-  [3700, "STEERING SYSTEM SYNCED"],
-  [5050, "DRIVETRAIN CALIBRATED"],
-  [6200, "LIGHT SYSTEM ONLINE"],
-  [7600, "READY TO RIDE"]
+  [650, "REAR WHEEL LOCKED"],
+  [1300, "FRONT WHEEL LOCKED"],
+  [2200, "WALK BELT INSTALLED"],
+  [3100, "ECOROLLER MOTOR ONLINE"],
+  [4100, "UPRIGHT STEERING SYNCED"],
+  [5350, "LIGHTS AND BATTERY ACTIVE"],
+  [7100, "RIDER BALANCE STABLE"],
+  [8200, "SLOW MOTION WALK-DRIVE"]
 ];
 
 for (const [time, text] of phases) {
@@ -597,8 +556,7 @@ for (const [time, text] of phases) {
 
 resizeMatrix();
 drawMatrix();
-
-window.addEventListener("resize", resizeMatrix);
+addEventListener("resize", resizeMatrix);
 </script>
 </body>
 </html>
